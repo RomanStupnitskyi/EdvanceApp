@@ -1,0 +1,35 @@
+﻿{
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/api/content/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "DownstreamPathTemplate": "/{everything}",
+      "SwaggerKey": "content",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+          {
+          "Host": "edvance.content-service",
+          "Port": 8080
+          }
+      ],
+      "DownstreamHeaderTransform": {
+        "Authorization": "Copy"
+      }
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:5001"
+  },
+  "SwaggerEndPoints": [
+    {
+      "Key": "content",
+      "Config": [
+        {
+          "Name": "Academic Content API",
+          "Version": "v1",
+          "Url": "http://edvance.content-service:8080/swagger/v1/swagger.json"
+        }
+      ]
+    }
+  ]
+}

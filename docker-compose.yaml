@@ -1,0 +1,91 @@
+﻿services:
+  edvance.database:
+    image: postgres:17.4
+    container_name: edvance.database
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=edvance
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./db-init:/docker-entrypoint-initdb.d
+    networks:
+      - edvance-net
+  
+  edvance.keycloak:
+    image: quay.io/keycloak/keycloak:26.2.2
+    container_name: edvance.keycloak
+    hostname: edvance.keycloak
+    ports:
+      - "8080:8080"
+    environment:
+      - KC_HEALTH_ENABLED=true
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    depends_on:
+      - edvance.database
+    networks:
+      - edvance-net
+  
+  edvance.rabbitmq:
+    image: rabbitmq:4.1.0-management
+    container_name: edvance.rabbitmq
+    hostname: edvance.rabbitmq
+    ports:
+      - "5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+      - edvance-net
+
+  edvance.content-service:
+    image: contentservice.web.api
+    container_name: edvance.content-service
+    build:
+      context: .
+      dockerfile: src/Services/ContentService/ContentService.Web.Api/Dockerfile
+    ports:
+      - "8080"
+    environment:
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ConnectionStrings__DefaultConnection=Host=edvance.database;Database=content;Username=postgres;Password=postgres
+      - MessageBroker__Hostname=edvance.rabbitmq
+      - MessageBroker__Port=5672
+      - MessageBroker__Username=guest
+      - MessageBroker__Password=guest
+    depends_on:
+      - edvance.database
+      - edvance.rabbitmq
+      - edvance.keycloak
+    networks:
+      - edvance-net
+
+  edvance.api-gateway:
+    image: apigateway.web.api
+    container_name: edvance.api-gateway
+    build:
+      context: .
+      dockerfile: src/ApiGateway/ApiGateway.Web.Api/Dockerfile
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_HTTP_PORTS=5000
+      - ASPNETCORE_HTTPS_PORTS=5001
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=e653170f-fdff-4b2c-963a-abbd61675086
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/run/secrets/edvance.cert
+    secrets:
+      - edvance.cert
+    networks:
+      - edvance-net
+
+secrets:
+  edvance.cert:
+    file: ./certs/edvance.dev.api-gateway.tls.pfx
+
+networks:
+  edvance-net:
+    driver: bridge
