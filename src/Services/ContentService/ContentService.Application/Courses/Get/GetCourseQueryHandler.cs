@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ContentService.Application.Courses.Get;
 
-public class GetCourseQueryHandler(IApplicationDbContext dbContext) : IQueryHandler<GetCoursesQuery, List<GetCourseResponse>>
+public class GetCourseQueryHandler(IApplicationDbContext dbContext)
+	: IQueryHandler<GetCoursesQuery, List<GetCourseResponse>>
 {
 	public async Task<Result<List<GetCourseResponse>>> Handle(
 		GetCoursesQuery query,

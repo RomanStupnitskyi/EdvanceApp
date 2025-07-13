@@ -3,10 +3,13 @@ using ContentService.SharedKernel;
 using ContentService.Application.Abstractions.Data;
 using ContentService.Application.Messaging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 
 namespace ContentService.Application.Assignments.Update;
 
-public class UpdateAssignmentCommandHandler(IApplicationDbContext dbContext)
+public class UpdateAssignmentCommandHandler(
+	HybridCache cache,
+	IApplicationDbContext dbContext)
 	: ICommandHandler<UpdateAssignmentCommand, UpdateAssignmentResponse>
 {
 	public async Task<Result<UpdateAssignmentResponse>> Handle(
@@ -41,6 +44,9 @@ public class UpdateAssignmentCommandHandler(IApplicationDbContext dbContext)
 			assignment.EndDate = command.EndDate.Value;
 
 		await dbContext.SaveChangesAsync(cancellationToken);
+		
+		var cacheKey = $"assignment:{assignment.Id}";
+		await cache.RemoveAsync(cacheKey, cancellationToken);
 
 		return Result.Success(new UpdateAssignmentResponse(assignment));
 	}

@@ -7,7 +7,7 @@ using ContentService.Application.Messaging;
 namespace ContentService.Application.Submissions.SubmitAssignment;
 
 public class SubmitAssignmentCommandHandler(
-	IQueryHandler<GetAssignmentByIdQuery, AssignmentResponse> getAssignmentHandler,
+	IQueryHandler<GetAssignmentByIdQuery, AssignmentByIdResponse> getAssignmentHandler,
 	IApplicationDbContext dbContext)
 	: ICommandHandler<SubmitAssignmentCommand, AssignmentSubmittedResponse>
 {

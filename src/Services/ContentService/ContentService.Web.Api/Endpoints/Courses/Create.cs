@@ -14,19 +14,19 @@ public class Create : IEndpoint
 			CreateCourseDto dto,
 			ICommandHandler<CreateCourseCommand, CreateCourseResponse> handler,
 			CancellationToken cancellationToken) =>
-		{
-			var command = new CreateCourseCommand
 			{
-				Title = dto.Title,
-				Description = dto.Description,
-				IsVisible = dto.IsVisible,
-				CreatedBy = Guid.NewGuid() // TODO: Replace it with actual user ID from context
-			};
+				var command = new CreateCourseCommand
+				{
+					Title = dto.Title,
+					Description = dto.Description,
+					IsVisible = dto.IsVisible,
+					CreatedBy = Guid.Empty // TODO: Implement user context to get the actual user ID
+				};
+				
+				var result = await handler.Handle(command, cancellationToken);
 
-			var result = await handler.Handle(command, cancellationToken);
-		
-			return result.Match(Results.Ok, CustomResults.Problem);
-		})
+				return result.Match(Results.Ok, CustomResults.Problem);
+			})
 		.WithTags(Tags.Courses);
 	}
 }

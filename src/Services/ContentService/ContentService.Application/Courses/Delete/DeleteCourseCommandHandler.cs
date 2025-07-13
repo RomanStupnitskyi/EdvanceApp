@@ -3,10 +3,13 @@ using ContentService.SharedKernel;
 using ContentService.Application.Abstractions.Data;
 using ContentService.Application.Messaging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 
 namespace ContentService.Application.Courses.Delete;
 
-public class DeleteCourseCommandHandler(IApplicationDbContext dbContext)
+public class DeleteCourseCommandHandler(
+	HybridCache cache,
+	IApplicationDbContext dbContext)
 	: ICommandHandler<DeleteCourseCommand>
 {
 	public async Task<Result> Handle(DeleteCourseCommand command, CancellationToken cancellationToken)
@@ -19,6 +22,9 @@ public class DeleteCourseCommandHandler(IApplicationDbContext dbContext)
 
 		dbContext.Courses.Remove(course);
 		await dbContext.SaveChangesAsync(cancellationToken);
+		
+		var cacheKey = $"course:{command.CourseId}";
+		await cache.RemoveAsync(cacheKey, cancellationToken: cancellationToken);
 
 		return Result.Success();
 	}

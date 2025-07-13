@@ -1,8 +1,6 @@
-﻿using ContentService.Domain.Courses;
+﻿namespace ContentService.Domain.Courses;
 
-namespace ContentService.Application.Courses.GetById;
-
-public sealed class CourseResponse(Course course)
+public class CourseResponse(Course course)
 {
 	public Guid Id { get; init; } = course.Id;
 

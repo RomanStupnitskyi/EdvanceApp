@@ -6,7 +6,9 @@ namespace ContentService.Web.Api.Extensions;
 public static class ServiceCollectionExtensions
 {
 	[SuppressMessage("ReSharper", "NullableWarningSuppressionIsUsed")]
-	internal static void AddSwaggerGenWithAuthentication(this IServiceCollection services, IConfiguration configuration)
+	internal static void AddSwaggerGenWithAuthentication(
+		this IServiceCollection services,
+		IConfiguration configuration)
 	{
 		services.AddSwaggerGen(options =>
 		{

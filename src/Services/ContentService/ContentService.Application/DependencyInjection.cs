@@ -29,11 +29,6 @@ public static class DependencyInjection
 		services.Decorate(typeof(ICommandHandler<,>), typeof(LoggingDecorator.CommandHandler<,>));
 		services.Decorate(typeof(ICommandHandler<>), typeof(LoggingDecorator.CommandBaseHandler<>));
 
-		services.Scan(scan => scan.FromAssembliesOf(typeof(DependencyInjection))
-			.AddClasses(classes => classes.AssignableTo(typeof(IConsumer<>)), publicOnly: false)
-				.AsImplementedInterfaces()
-				.WithScopedLifetime());
-
 		services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly, includeInternalTypes: true);
 
 		return services;
@@ -42,7 +37,7 @@ public static class DependencyInjection
 	public static IBusRegistrationConfigurator AddApplicationConsumers(
 		this IBusRegistrationConfigurator configurator)
 	{
-		// configurator.AddConsumers(typeof(DependencyInjection).Assembly);
+		configurator.AddConsumers(typeof(DependencyInjection).Assembly);
 		
 		return configurator;
 	}

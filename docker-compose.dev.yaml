@@ -1,12 +1,59 @@
 services:
   edvance.database:
-    volumes:
-      - ./.containers/edvance-db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
   
   edvance.keycloak:
-    environment:
-      - KC_DB=postgres
-      - KC_DB_URL=jdbc:postgresql://edvance.database:5432/keycloak
-      - KC_DB_USERNAME=postgres
-      - KC_DB_PASSWORD=postgres
+    ports:
+      - "8080:8080"
     command: start-dev
+    
+  edvance.rabbitmq:
+    ports:
+      - "5672"
+      - "15672:15672"
+        
+  edvance.redis:
+    ports:
+      - "6379:6379"
+    
+  edvance.clamav:
+    ports:
+      - "3310:3310"
+        
+  edvance.minio:
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+        
+  edvance.content-service:
+    ports:
+      - "8080"
+    environment:
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ConnectionStrings__DefaultConnection=${POSTGRES_CONNECTION_STRING:-Host=edvance.database;Database=content;Username=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD:-postgres}}
+      - ConnectionStrings__RedisConnectionString=edvance.redis:6379
+      - MessageBroker__Hostname=edvance.rabbitmq
+      - MessageBroker__Port=5672
+      - MessageBroker__Username=${RABBITMQ_DEFAULT_USER:-guest}
+      - MessageBroker__Password=${RABBITMQ_DEFAULT_PASS:-guest}
+        
+  edvance.api-gateway:
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_HTTP_PORTS=5000
+      - ASPNETCORE_HTTPS_PORTS=5001
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERTIFICATE_PASSWORD:-password}
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/run/secrets/edvance.cert
+
+secrets:
+  edvance.cert:
+    file: ./certs/edvance.dev.api-gateway.tls.pfx

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ContentService.Application.Assignments.GetByCourseId;
 
 public class GetAssignmentByCourseIdQueryHandler(
-	IQueryHandler<GetCourseByIdQuery, CourseResponse> handler,
+	IQueryHandler<GetCourseByIdQuery, CourseByIdResponse> handler,
 	IApplicationDbContext dbContext)
 	: IQueryHandler<GetAssignmentByCourseIdQuery, List<CourseAssignmentResponse>>
 {

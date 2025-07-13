@@ -11,7 +11,7 @@ public class GetById : IEndpoint
 	{
 		app.MapGet("courses/{courseId:guid}", async (
 			Guid courseId,
-			IQueryHandler<GetCourseByIdQuery, CourseResponse> handler,
+			IQueryHandler<GetCourseByIdQuery, CourseByIdResponse> handler,
 			CancellationToken cancellationToken) =>
 		{
 			var query = new GetCourseByIdQuery(courseId);

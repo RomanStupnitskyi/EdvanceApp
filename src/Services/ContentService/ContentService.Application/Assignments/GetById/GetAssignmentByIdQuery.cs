@@ -2,4 +2,4 @@
 
 namespace ContentService.Application.Assignments.GetById;
 
-public sealed record GetAssignmentByIdQuery(Guid AssignmentId) : IQuery<AssignmentResponse>;
+public sealed record GetAssignmentByIdQuery(Guid AssignmentId) : IQuery<AssignmentByIdResponse>;

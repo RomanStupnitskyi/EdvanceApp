@@ -3,11 +3,13 @@ using ContentService.SharedKernel;
 using ContentService.Application.Abstractions.Data;
 using ContentService.Application.Courses.GetById;
 using ContentService.Application.Messaging;
+using Microsoft.Extensions.Caching.Hybrid;
 
 namespace ContentService.Application.Assignments.Create;
 
 public class CreateAssignmentCommandHandler(
-	IQueryHandler<GetCourseByIdQuery, CourseResponse> getCourseHandler,
+	IQueryHandler<GetCourseByIdQuery, CourseByIdResponse> getCourseHandler,
+	HybridCache cache,
 	IApplicationDbContext dbContext)
 	: ICommandHandler<CreateAssignmentCommand, CreateAssignmentResponse>
 {
@@ -36,10 +38,11 @@ public class CreateAssignmentCommandHandler(
 			EndDate = command.EndDate
 		};
 		
-		// assignment.Raise(new AssignmentCreatedDomainEvent(assignment.Id));
-		
 		await dbContext.Assignments.AddAsync(assignment, cancellationToken);
 		await dbContext.SaveChangesAsync(cancellationToken);
+		
+		var cacheKey = $"assignment:{assignment.Id}";
+		await cache.SetAsync(cacheKey, assignment, cancellationToken: cancellationToken);
 		
 		return Result.Success(new CreateAssignmentResponse(assignment));
 	}

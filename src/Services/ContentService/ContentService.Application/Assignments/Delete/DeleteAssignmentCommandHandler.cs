@@ -3,10 +3,13 @@ using ContentService.SharedKernel;
 using ContentService.Application.Abstractions.Data;
 using ContentService.Application.Messaging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 
 namespace ContentService.Application.Assignments.Delete;
 
-public class DeleteAssignmentCommandHandler(IApplicationDbContext dbContext)
+public class DeleteAssignmentCommandHandler(
+	HybridCache cache,
+	IApplicationDbContext dbContext)
 	: ICommandHandler<DeleteAssignmentCommand>
 {
 	public async Task<Result> Handle(DeleteAssignmentCommand command, CancellationToken cancellationToken)
@@ -19,6 +22,9 @@ public class DeleteAssignmentCommandHandler(IApplicationDbContext dbContext)
 
 		dbContext.Assignments.Remove(assignment);
 		await dbContext.SaveChangesAsync(cancellationToken);
+		
+		var cacheKey = $"assignment:{assignment.Id}";
+		await cache.RemoveAsync(cacheKey, cancellationToken);
 
 		return Result.Success();
 	}

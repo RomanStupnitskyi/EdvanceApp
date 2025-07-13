@@ -34,7 +34,7 @@ if (app.Environment.IsDevelopment())
 	app.ApplyMigrations();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.MapHealthChecks("health", new HealthCheckOptions
 {

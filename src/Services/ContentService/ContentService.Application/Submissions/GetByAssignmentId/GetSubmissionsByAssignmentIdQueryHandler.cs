@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ContentService.Application.Submissions.GetByAssignmentId;
 
 public class GetSubmissionsByAssignmentIdQueryHandler(
-	IQueryHandler<GetAssignmentByIdQuery, AssignmentResponse> handler,
+	IQueryHandler<GetAssignmentByIdQuery, AssignmentByIdResponse> handler,
 	IApplicationDbContext dbContext)
 	: IQueryHandler<GetSubmissionsByAssignmentIdQuery, List<AssignmentSubmissionResponse>>
 {

@@ -7,16 +7,16 @@ using Microsoft.EntityFrameworkCore;
 namespace ContentService.Application.Assignments.GetById;
 
 public class GetAssignmentByIdQueryHandler(IApplicationDbContext dbContext)
-	: IQueryHandler<GetAssignmentByIdQuery, AssignmentResponse>
+	: IQueryHandler<GetAssignmentByIdQuery, AssignmentByIdResponse>
 {
-	public async Task<Result<AssignmentResponse>> Handle(GetAssignmentByIdQuery query, CancellationToken cancellationToken)
+	public async Task<Result<AssignmentByIdResponse>> Handle(GetAssignmentByIdQuery query, CancellationToken cancellationToken)
 	{
 		var assignment = await dbContext.Assignments
 			.AsNoTracking()
 			.FirstOrDefaultAsync(a => a.Id == query.AssignmentId, cancellationToken);
 
 		return assignment is null
-			? Result.Failure<AssignmentResponse>(AssignmentErrors.NotFound(query.AssignmentId))
-			: Result.Success(new AssignmentResponse(assignment));
+			? Result.Failure<AssignmentByIdResponse>(AssignmentErrors.NotFound(query.AssignmentId))
+			: Result.Success(new AssignmentByIdResponse(assignment));
 	}
 }

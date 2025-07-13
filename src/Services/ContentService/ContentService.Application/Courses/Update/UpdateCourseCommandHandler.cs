@@ -3,10 +3,13 @@ using ContentService.SharedKernel;
 using ContentService.Application.Abstractions.Data;
 using ContentService.Application.Messaging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 
 namespace ContentService.Application.Courses.Update;
 
-public class UpdateCourseCommandHandler(IApplicationDbContext dbContext)
+public class UpdateCourseCommandHandler(
+	HybridCache cache,
+	IApplicationDbContext dbContext)
 	: ICommandHandler<UpdateCourseCommand, UpdateCourseResponse>
 {
 	public async Task<Result<UpdateCourseResponse>> Handle(UpdateCourseCommand command, CancellationToken cancellationToken)
@@ -30,6 +33,9 @@ public class UpdateCourseCommandHandler(IApplicationDbContext dbContext)
 		course.LastModifiedBy = new Guid(); // TODO: Replace it with actual user ID from context
 
 		await dbContext.SaveChangesAsync(cancellationToken);
+		
+		var cacheKey = $"course:{course.Id}";
+		await cache.SetAsync(cacheKey, course, cancellationToken: cancellationToken);
 
 		return Result.Success(new UpdateCourseResponse(course));
 	}

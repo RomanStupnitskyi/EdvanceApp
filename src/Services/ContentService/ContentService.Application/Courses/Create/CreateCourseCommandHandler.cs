@@ -2,10 +2,12 @@
 using ContentService.SharedKernel;
 using ContentService.Application.Abstractions.Data;
 using ContentService.Application.Messaging;
+using Microsoft.Extensions.Caching.Hybrid;
 
 namespace ContentService.Application.Courses.Create;
 
 public class CreateCourseCommandHandler(
+	HybridCache cache,
 	IApplicationDbContext dbContext)
 	: ICommandHandler<CreateCourseCommand, CreateCourseResponse>
 {
@@ -19,11 +21,11 @@ public class CreateCourseCommandHandler(
 			CreatedBy = command.CreatedBy
 		};
 		
-		// course.Raise(new CourseCreatedDomainEvent(course.Id));
-		
 		await dbContext.Courses.AddAsync(course, cancellationToken);
-		
 		await dbContext.SaveChangesAsync(cancellationToken);
+		
+		var cacheKey = $"course:{course.Id}";
+		await cache.SetAsync(cacheKey, course, cancellationToken: cancellationToken);
 		
 		return Result.Success(new CreateCourseResponse(course));
 	}

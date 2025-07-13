@@ -10,4 +10,8 @@
       <ProjectReference Include="..\ContentService.SharedKernel\ContentService.SharedKernel.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="AssignmentSubmissions\Events\" />
+    </ItemGroup>
+
 </Project>

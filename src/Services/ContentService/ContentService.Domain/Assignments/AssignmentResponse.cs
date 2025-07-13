@@ -1,6 +1,4 @@
-﻿using ContentService.Domain.Assignments;
-
-namespace ContentService.Application.Assignments.GetById;
+﻿namespace ContentService.Domain.Assignments;
 
 public class AssignmentResponse(Assignment assignment)
 {

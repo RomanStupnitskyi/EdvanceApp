@@ -2,13 +2,12 @@
   edvance.database:
     image: postgres:17.4
     container_name: edvance.database
-    ports:
-      - "5432:5432"
     environment:
       - POSTGRES_DB=edvance
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
     volumes:
+      - ./.containers/edvance-db:/var/lib/postgresql/data
       - ./db-init:/docker-entrypoint-initdb.d
     networks:
       - edvance-net
@@ -17,12 +16,14 @@
     image: quay.io/keycloak/keycloak:26.2.2
     container_name: edvance.keycloak
     hostname: edvance.keycloak
-    ports:
-      - "8080:8080"
     environment:
+      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN:-admin}
+      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://edvance.database:5432/keycloak
+      - KC_DB_USERNAME=${POSTGRES_USER:-postgres}
+      - KC_DB_PASSWORD=${POSTGRES_PASSWORD:-postgres}
       - KC_HEALTH_ENABLED=true
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=admin
     depends_on:
       - edvance.database
     networks:
@@ -32,12 +33,40 @@
     image: rabbitmq:4.1.0-management
     container_name: edvance.rabbitmq
     hostname: edvance.rabbitmq
-    ports:
-      - "5672"
-      - "15672:15672"
     environment:
-      - RABBITMQ_DEFAULT_USER=guest
-      - RABBITMQ_DEFAULT_PASS=guest
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER:-guest}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS:-guest}
+    networks:
+      - edvance-net
+ 
+  edvance.redis:
+    image: redis:8.0.3
+    container_name: edvance.redis
+    restart: always
+    volumes:
+      - redis_data:/data
+    networks:
+      - edvance-net
+
+  edvance.clamav:
+    image: clamav/clamav:1.4.3
+    container_name: edvance.clamav
+    environment:
+      - CLAMAV_NO_FRESHCLAMD=true
+    volumes:
+      - clamav_data:/var/lib/clamav
+    networks:
+      - edvance-net
+  
+  edvance.minio:
+    image: minio/minio:RELEASE.2025-06-13T11-33-47Z
+    container_name: edvance.minio
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER:-minioadmin}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-minioadmin}
+      - MINIO_DEFAULT_BUCKETS=edvance-files
+    volumes:
+      - minio_data:/data
     networks:
       - edvance-net
 
@@ -47,19 +76,18 @@
     build:
       context: .
       dockerfile: src/Services/ContentService/ContentService.Web.Api/Dockerfile
-    ports:
-      - "8080"
-    environment:
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ConnectionStrings__DefaultConnection=Host=edvance.database;Database=content;Username=postgres;Password=postgres
-      - MessageBroker__Hostname=edvance.rabbitmq
-      - MessageBroker__Port=5672
-      - MessageBroker__Username=guest
-      - MessageBroker__Password=guest
     depends_on:
       - edvance.database
       - edvance.rabbitmq
+      - edvance.redis
+      - edvance.minio
+      - edvance.clamav
       - edvance.keycloak
+    environment:
+      - MessageBroker__Hostname=edvance.rabbitmq
+      - MessageBroker__Port=5672
+      - MessageBroker__Username=${RABBITMQ_DEFAULT_USER:-guest}
+      - MessageBroker__Password=${RABBITMQ_DEFAULT_PASS:-guest}
     networks:
       - edvance-net
 
@@ -69,23 +97,16 @@
     build:
       context: .
       dockerfile: src/ApiGateway/ApiGateway.Web.Api/Dockerfile
-    ports:
-      - "5000:5000"
-      - "5001:5001"
-    environment:
-      - ASPNETCORE_HTTP_PORTS=5000
-      - ASPNETCORE_HTTPS_PORTS=5001
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=e653170f-fdff-4b2c-963a-abbd61675086
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/run/secrets/edvance.cert
     secrets:
       - edvance.cert
     networks:
       - edvance-net
 
-secrets:
-  edvance.cert:
-    file: ./certs/edvance.dev.api-gateway.tls.pfx
-
 networks:
   edvance-net:
     driver: bridge
+
+volumes:
+  redis_data:
+  clamav_data:
+  minio_data:
