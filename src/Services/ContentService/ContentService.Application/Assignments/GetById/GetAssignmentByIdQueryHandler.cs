@@ -3,17 +3,24 @@ using ContentService.SharedKernel;
 using ContentService.Application.Abstractions.Data;
 using ContentService.Application.Messaging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 
 namespace ContentService.Application.Assignments.GetById;
 
-public class GetAssignmentByIdQueryHandler(IApplicationDbContext dbContext)
+public class GetAssignmentByIdQueryHandler(
+	HybridCache cache,
+	IApplicationDbContext dbContext)
 	: IQueryHandler<GetAssignmentByIdQuery, AssignmentByIdResponse>
 {
 	public async Task<Result<AssignmentByIdResponse>> Handle(GetAssignmentByIdQuery query, CancellationToken cancellationToken)
 	{
-		var assignment = await dbContext.Assignments
-			.AsNoTracking()
-			.FirstOrDefaultAsync(a => a.Id == query.AssignmentId, cancellationToken);
+		var cacheKey = $"assignment:{query.AssignmentId}";
+		var assignment = await cache.GetOrCreateAsync(cacheKey, async entry =>
+		{
+			return await dbContext.Assignments
+				.AsNoTracking()
+				.FirstOrDefaultAsync(a => a.Id == query.AssignmentId, entry);
+		}, cancellationToken: cancellationToken);
 
 		return assignment is null
 			? Result.Failure<AssignmentByIdResponse>(AssignmentErrors.NotFound(query.AssignmentId))

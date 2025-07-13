@@ -3,10 +3,12 @@ using ContentService.SharedKernel;
 using ContentService.Application.Abstractions.Data;
 using ContentService.Application.Messaging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 
 namespace ContentService.Application.Submissions.GetById;
 
 public class GetSubmissionByIdQueryHandler(
+	HybridCache cache,
 	IApplicationDbContext dbContext)
 	: IQueryHandler<GetSubmissionByIdQuery, GetSubmissionByIdResponse>
 {
@@ -14,10 +16,14 @@ public class GetSubmissionByIdQueryHandler(
 		GetSubmissionByIdQuery query,
 		CancellationToken cancellationToken)
 	{
-		var submission = await dbContext.AssignmentSubmissions
-			.Where(submission => submission.Id == query.SubmissionId)
-			.Select(submission => new GetSubmissionByIdResponse(submission))
-			.SingleOrDefaultAsync(cancellationToken);
+		var cacheKey = $"submission:{query.SubmissionId}";
+		var submission = await cache.GetOrCreateAsync(cacheKey, async entry =>
+		{
+			return await dbContext.AssignmentSubmissions
+				.Where(submission => submission.Id == query.SubmissionId)
+				.Select(submission => new GetSubmissionByIdResponse(submission))
+				.SingleOrDefaultAsync(entry);
+		}, cancellationToken: cancellationToken);
 		
 		if (submission is null)
 			return Result.Failure<GetSubmissionByIdResponse>(
