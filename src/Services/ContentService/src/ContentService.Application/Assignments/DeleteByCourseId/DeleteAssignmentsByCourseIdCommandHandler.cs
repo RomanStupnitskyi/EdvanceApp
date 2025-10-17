@@ -17,17 +17,17 @@ public class DeleteAssignmentsByCourseIdCommandHandler(
 	{
 		var assignments = await dbContext.Assignments
 			.Where(a => a.CourseId == command.CourseId)
-			.ToListAsync(cancellationToken);
+			.ToListAsync(cancellationToken).ConfigureAwait(false);
 
 		if (assignments.Count == 0)
 			return Result.Success(
 				new DeletedAssignmentsResponse { DeletedAssignmentsCount = 0 });
 		
 		dbContext.Assignments.RemoveRange(assignments);
-		var deletedCount = await dbContext.SaveChangesAsync(cancellationToken);
+		var deletedCount = await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 		
 		foreach (var cacheKey in assignments.Select(assignment => $"assignment:{assignment.Id}"))
-			await cache.RemoveAsync(cacheKey, cancellationToken);
+			await cache.RemoveAsync(cacheKey, cancellationToken).ConfigureAwait(false);
 		
 		return Result.Success(new DeletedAssignmentsResponse { DeletedAssignmentsCount = deletedCount });
 	}

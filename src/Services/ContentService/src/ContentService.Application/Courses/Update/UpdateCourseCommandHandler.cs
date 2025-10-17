@@ -14,8 +14,10 @@ public class UpdateCourseCommandHandler(
 {
 	public async Task<Result<UpdateCourseResponse>> Handle(UpdateCourseCommand command, CancellationToken cancellationToken)
 	{
+		ArgumentNullException.ThrowIfNull(command);
+		
 		var course = await dbContext.Courses
-			.SingleOrDefaultAsync(c => c.Id == command.CourseId, cancellationToken);
+			.SingleOrDefaultAsync(c => c.Id == command.CourseId, cancellationToken).ConfigureAwait(false);
 
 		if (course is null)
 			return Result.Failure<UpdateCourseResponse>(CourseErrors.NotFound(command.CourseId));
@@ -30,12 +32,12 @@ public class UpdateCourseCommandHandler(
 			course.IsVisible = command.IsVisible.Value;
 		
 		course.LastModifiedAt = DateTime.UtcNow;
-		course.LastModifiedBy = new Guid(); // TODO: Replace it with actual user ID from context
+		course.LastModifiedBy = Guid.Empty;
 
-		await dbContext.SaveChangesAsync(cancellationToken);
+		await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 		
 		var cacheKey = $"course:{course.Id}";
-		await cache.SetAsync(cacheKey, course, cancellationToken: cancellationToken);
+		await cache.SetAsync(cacheKey, course, cancellationToken: cancellationToken).ConfigureAwait(false);
 
 		return Result.Success(new UpdateCourseResponse(course));
 	}

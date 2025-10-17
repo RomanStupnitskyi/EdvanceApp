@@ -10,7 +10,7 @@ public class AssignmentSubmission : Entity
 	
 	public Guid StudentId { get; init; }
 	
-	public string Content { get; set; }
+	public required string Content { get; set; }
 	
 	public DateTime SubmittedAt { get; init; } = DateTime.UtcNow;
 	

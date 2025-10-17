@@ -1,11 +1,13 @@
-﻿using ContentService.Application.Courses.Get;
+﻿using System.Diagnostics.CodeAnalysis;
+using ContentService.Application.Courses.GetMany;
 using ContentService.Application.Messaging;
 using ContentService.Web.Api.Extensions;
 using ContentService.Web.Api.Infrastructure;
 
 namespace ContentService.Web.Api.Endpoints.Courses;
 
-public class Get : IEndpoint
+[SuppressMessage("Maintainability", "CA1515:Consider making public types internal")]
+public class GetMany : IEndpoint
 {
 	public void MapEndpoint(IEndpointRouteBuilder app)
 	{
@@ -15,7 +17,7 @@ public class Get : IEndpoint
 		{
 			var query = new GetCoursesQuery();
 		
-			var result = await handler.Handle(query, cancellationToken);
+			var result = await handler.Handle(query, cancellationToken).ConfigureAwait(false);
 
 			return result.Match(Results.Ok, CustomResults.Problem);
 		})

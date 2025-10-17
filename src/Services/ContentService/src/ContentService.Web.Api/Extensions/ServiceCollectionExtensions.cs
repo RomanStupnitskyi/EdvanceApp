@@ -3,6 +3,7 @@ using Microsoft.OpenApi.Models;
 
 namespace ContentService.Web.Api.Extensions;
 
+[SuppressMessage("Maintainability", "CA1515:Consider making public types internal")]
 public static class ServiceCollectionExtensions
 {
 	[SuppressMessage("ReSharper", "NullableWarningSuppressionIsUsed")]

@@ -11,6 +11,8 @@ namespace ContentService.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            ArgumentNullException.ThrowIfNull(migrationBuilder);
+            
             migrationBuilder.EnsureSchema(
                 name: "public");
 
@@ -104,6 +106,8 @@ namespace ContentService.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            ArgumentNullException.ThrowIfNull(migrationBuilder);
+            
             migrationBuilder.DropTable(
                 name: "assignment_submissions",
                 schema: "public");

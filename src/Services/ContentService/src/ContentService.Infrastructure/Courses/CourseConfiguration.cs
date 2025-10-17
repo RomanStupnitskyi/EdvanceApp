@@ -8,6 +8,8 @@ public class CourseConfiguration : IEntityTypeConfiguration<Course>
 {
 	public void Configure(EntityTypeBuilder<Course> builder)
 	{
+		ArgumentNullException.ThrowIfNull(builder);
+		
 		builder.HasKey(course => course.Id);
 
 		builder.Property(course => course.Title)

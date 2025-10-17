@@ -14,13 +14,15 @@ public class GetAssignmentByIdQueryHandler(
 {
 	public async Task<Result<AssignmentByIdResponse>> Handle(GetAssignmentByIdQuery query, CancellationToken cancellationToken)
 	{
+		ArgumentNullException.ThrowIfNull(query);
+		
 		var cacheKey = $"assignment:{query.AssignmentId}";
 		var assignment = await cache.GetOrCreateAsync(cacheKey, async entry =>
 		{
 			return await dbContext.Assignments
 				.AsNoTracking()
-				.FirstOrDefaultAsync(a => a.Id == query.AssignmentId, entry);
-		}, cancellationToken: cancellationToken);
+				.FirstOrDefaultAsync(a => a.Id == query.AssignmentId, entry).ConfigureAwait(false);
+		}, cancellationToken: cancellationToken).ConfigureAwait(false);
 
 		return assignment is null
 			? Result.Failure<AssignmentByIdResponse>(AssignmentErrors.NotFound(query.AssignmentId))

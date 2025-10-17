@@ -8,25 +8,6 @@ var builder = WebApplication.CreateBuilder(args);
 // ----------------------------------------------------------------
 builder.Services.AddEndpointsApiExplorer();
 
-// -------------------------------------------------------------------------------
-// -- OpenTelemetry
-// -------------------------------------------------------------------------------
-// builder.Services
-// 	.AddOpenTelemetry()
-// 	.ConfigureResource(resource => resource.AddService("ApiGateway.Web.Api"))
-// 	.WithTracing(options =>
-// 	{
-// 		options
-// 			.AddAspNetCoreInstrumentation()
-// 			.AddHttpClientInstrumentation();
-//
-// 		options.AddOtlpExporter(configure =>
-// 		{
-// 			configure.Endpoint = new Uri(builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]
-// 			                             ?? throw new Exception("OTLP Exporter Endpoint is not configured"));
-// 		});
-// 	});
-
 // ----------------------------------------------------------------
 // -- Add Ocelot configuration from JSON file.
 // ----------------------------------------------------------------
@@ -67,6 +48,6 @@ app.UseSwaggerForOcelotUI(opt =>
 	opt.PathToSwaggerGenerator = "/swagger/docs";
 });
 
-await app.UseOcelot(); // Use Ocelot middleware for routing
+await app.UseOcelot().ConfigureAwait(false); // Use Ocelot middleware for routing
 
-app.Run();
+await app.RunAsync().ConfigureAwait(false);

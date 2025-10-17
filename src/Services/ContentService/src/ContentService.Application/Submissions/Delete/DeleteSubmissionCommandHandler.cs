@@ -13,14 +13,16 @@ public class DeleteSubmissionCommandHandler(
 		DeleteSubmissionCommand command,
 		CancellationToken cancellationToken)
 	{
+		ArgumentNullException.ThrowIfNull(command);
+		
 		var submission = await dbContext.AssignmentSubmissions
-			.SingleOrDefaultAsync(submission => submission.Id == command.SubmissionId, cancellationToken);
+			.SingleOrDefaultAsync(submission => submission.Id == command.SubmissionId, cancellationToken).ConfigureAwait(false);
 
 		if (submission is null)
 			return Result.Failure(AssignmentSubmissionErrors.NotFound(command.SubmissionId));
 
 		dbContext.AssignmentSubmissions.Remove(submission);
-		await dbContext.SaveChangesAsync(cancellationToken);
+		await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
 		return Result.Success();
 	}

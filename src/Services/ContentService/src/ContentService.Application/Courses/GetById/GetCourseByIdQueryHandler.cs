@@ -14,14 +14,17 @@ public class GetCourseByIdQueryHandler(
 {
 	public async Task<Result<CourseByIdResponse>> Handle(GetCourseByIdQuery query, CancellationToken cancellationToken)
 	{
+		ArgumentNullException.ThrowIfNull(query);
+		
 		var cacheKey = $"course:{query.CourseId}";
 
 		var course = await cache.GetOrCreateAsync(cacheKey, async entry =>
 		{
 			return await dbContext.Courses
 				.Where(course => course.Id == query.CourseId)
-				.SingleOrDefaultAsync(entry);
-		}, cancellationToken: cancellationToken);
+				.SingleOrDefaultAsync(entry)
+				.ConfigureAwait(false);
+		}, cancellationToken: cancellationToken).ConfigureAwait(false);
 
 		return course is null
 			? Result.Failure<CourseByIdResponse>(CourseErrors.NotFound(query.CourseId))

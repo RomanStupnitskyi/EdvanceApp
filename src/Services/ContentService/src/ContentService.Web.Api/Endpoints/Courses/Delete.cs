@@ -1,10 +1,12 @@
-﻿using ContentService.Application.Courses.Delete;
+﻿using System.Diagnostics.CodeAnalysis;
+using ContentService.Application.Courses.Delete;
 using ContentService.Application.Messaging;
 using ContentService.Web.Api.Extensions;
 using ContentService.Web.Api.Infrastructure;
 
 namespace ContentService.Web.Api.Endpoints.Courses;
 
+[SuppressMessage("Maintainability", "CA1515:Consider making public types internal")]
 public class Delete : IEndpoint
 {
 	public void MapEndpoint(IEndpointRouteBuilder app)
@@ -16,7 +18,7 @@ public class Delete : IEndpoint
 		{
 			var command = new DeleteCourseCommand(courseId);
 		
-			var result = await handler.Handle(command, cancellationToken);
+			var result = await handler.Handle(command, cancellationToken).ConfigureAwait(false);
 		
 			return result.Match(Results.NoContent, CustomResults.Problem);
 		})

@@ -14,17 +14,19 @@ public class DeleteAssignmentCommandHandler(
 {
 	public async Task<Result> Handle(DeleteAssignmentCommand command, CancellationToken cancellationToken)
 	{
+		ArgumentNullException.ThrowIfNull(command);
+		
 		var assignment = await dbContext.Assignments
-			.SingleOrDefaultAsync(assignment => assignment.Id == command.AssignmentId, cancellationToken);
+			.SingleOrDefaultAsync(assignment => assignment.Id == command.AssignmentId, cancellationToken).ConfigureAwait(false);
 
 		if (assignment is null)
 			return Result.Failure(AssignmentErrors.NotFound(command.AssignmentId));
 
 		dbContext.Assignments.Remove(assignment);
-		await dbContext.SaveChangesAsync(cancellationToken);
+		await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 		
 		var cacheKey = $"assignment:{assignment.Id}";
-		await cache.RemoveAsync(cacheKey, cancellationToken);
+		await cache.RemoveAsync(cacheKey, cancellationToken).ConfigureAwait(false);
 
 		return Result.Success();
 	}

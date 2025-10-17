@@ -6,7 +6,7 @@ public class Assignment : Entity
 {
 	public Guid Id { get; init; }
 	public Guid CourseId { get; init; }
-	public string Title { get; set; }
+	public required string Title { get; set; }
 	public string? Description { get; set; }
 	public bool AllowLateSubmissions { get; set; }
 	public bool AllowResubmissions { get; set; }

@@ -14,9 +14,11 @@ public class GetAssignmentByCourseIdQueryHandler(
 {
 	public async Task<Result<List<CourseAssignmentResponse>>> Handle(GetAssignmentByCourseIdQuery query, CancellationToken cancellationToken)
 	{
+		ArgumentNullException.ThrowIfNull(query);
+		
 		var courseQuery = new GetCourseByIdQuery(query.CourseId);
 		
-		var course = await handler.Handle(courseQuery, cancellationToken);
+		var course = await handler.Handle(courseQuery, cancellationToken).ConfigureAwait(false);
 
 		if (course.IsFailure)
 			return Result.Failure<List<CourseAssignmentResponse>>(
@@ -25,7 +27,7 @@ public class GetAssignmentByCourseIdQueryHandler(
 		var assignments = await dbContext.Assignments
 			.Where(assignment => assignment.CourseId == query.CourseId)
 			.Select(assignment => new CourseAssignmentResponse(assignment))
-			.ToListAsync(cancellationToken);
+			.ToListAsync(cancellationToken).ConfigureAwait(false);
 
 		return Result.Success(assignments);
 	}

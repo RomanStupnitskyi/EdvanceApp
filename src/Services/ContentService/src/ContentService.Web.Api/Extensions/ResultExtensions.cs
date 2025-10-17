@@ -1,7 +1,9 @@
-﻿using ContentService.SharedKernel;
+﻿using System.Diagnostics.CodeAnalysis;
+using ContentService.SharedKernel;
 
 namespace ContentService.Web.Api.Extensions;
 
+[SuppressMessage("Maintainability", "CA1515:Consider making public types internal")]
 public static class ResultExtensions
 {
 	public static TOut Match<TOut>(
@@ -9,6 +11,10 @@ public static class ResultExtensions
 		Func<TOut> onSuccess,
 		Func<Result, TOut> onFailure)
 	{
+		ArgumentNullException.ThrowIfNull(onSuccess);
+		ArgumentNullException.ThrowIfNull(onFailure);
+		ArgumentNullException.ThrowIfNull(result);
+		
 		return result.IsSuccess ? onSuccess() : onFailure(result);
 	}
 
@@ -17,6 +23,10 @@ public static class ResultExtensions
 		Func<TIn, TOut> onSuccess,
 		Func<Result<TIn>, TOut> onFailure)
 	{
+		ArgumentNullException.ThrowIfNull(onSuccess);
+		ArgumentNullException.ThrowIfNull(onFailure);
+		ArgumentNullException.ThrowIfNull(result);
+		
 		return result.IsSuccess ? onSuccess(result.Value) : onFailure(result);
 	}
 }

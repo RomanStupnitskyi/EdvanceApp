@@ -1,13 +1,17 @@
-﻿using Serilog.Context;
+﻿using System.Diagnostics.CodeAnalysis;
+using Serilog.Context;
 
 namespace ContentService.Web.Api.Middleware;
 
+[SuppressMessage("Maintainability", "CA1515:Consider making public types internal")]
 public class RequestContextLoggingMiddleware(RequestDelegate next)
 {
 	private const string CorrelationIdHeaderName = "Correlation-Id";
 
 	public Task Invoke(HttpContext context)
 	{
+		ArgumentNullException.ThrowIfNull(context);
+		
 		using (LogContext.PushProperty("CorrelationId", GetCorrelationId(context)))
 		{
 			return next.Invoke(context);

@@ -8,5 +8,5 @@ public sealed record SubmitAssignmentCommand : ICommand<AssignmentSubmittedRespo
 	
 	public Guid StudentId { get; init; }
 	
-	public string Content { get; set; }
+	public required string Content { get; set; }
 }

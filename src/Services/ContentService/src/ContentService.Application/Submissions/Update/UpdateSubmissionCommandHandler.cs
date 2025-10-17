@@ -16,8 +16,11 @@ public class UpdateSubmissionCommandHandler(
 		UpdateSubmissionCommand command,
 		CancellationToken cancellationToken)
 	{
+		ArgumentNullException.ThrowIfNull(command);
+		
 		var submission = await dbContext.AssignmentSubmissions
-			.SingleOrDefaultAsync(submission => submission.Id == command.SubmissionId, cancellationToken);
+			.SingleOrDefaultAsync(submission => submission.Id == command.SubmissionId, cancellationToken)
+			.ConfigureAwait(false);
 
 		if (submission is null)
 			return Result.Failure<UpdateSubmissionResponse>(
@@ -28,7 +31,7 @@ public class UpdateSubmissionCommandHandler(
 			submission.Content = command.Content;
 			submission.LastUpdatedAt = DateTime.UtcNow;
 			
-			await dbContext.SaveChangesAsync(cancellationToken);
+			await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 		}
 		
 		return new UpdateSubmissionResponse(submission);

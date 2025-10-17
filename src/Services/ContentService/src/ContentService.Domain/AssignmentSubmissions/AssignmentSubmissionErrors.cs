@@ -2,13 +2,13 @@
 
 namespace ContentService.Domain.AssignmentSubmissions;
 
-public class AssignmentSubmissionErrors
+public static class AssignmentSubmissionErrors
 {
-	public static Error NotFound(Guid submissionId) => Error.NotFound(
+	public static ApiError NotFound(Guid submissionId) => ApiError.NotFound(
 		"AssignmentSubmission.NotFound",
 		$"The submission with the Id = '{submissionId}' was not found");
 	
-	public static Error AssignmentNotFound(Guid assignmentId) => Error.NotFound(
+	public static ApiError AssignmentNotFound(Guid assignmentId) => ApiError.NotFound(
 		"AssignmentSubmission.AssignmentNotFound",
 		$"The assignment with the Id = '{assignmentId}' was not found");
 }

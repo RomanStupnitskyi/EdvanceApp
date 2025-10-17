@@ -15,6 +15,8 @@ public class ApplicationDbContext(
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
+		ArgumentNullException.ThrowIfNull(modelBuilder);
+		
 		modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
 		modelBuilder.HasDefaultSchema(Schemas.Default);

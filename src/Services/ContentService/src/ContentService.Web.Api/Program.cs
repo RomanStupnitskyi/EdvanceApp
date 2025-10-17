@@ -10,8 +10,6 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// builder.services.AddSwaggerGenWithAuthentication(builder.configuration);
-
 builder.Host.UseSerilog((context, loggerConfiguration) =>
 	loggerConfiguration.ReadFrom.Configuration(context.Configuration));
 
@@ -34,8 +32,6 @@ if (app.Environment.IsDevelopment())
 	app.ApplyMigrations();
 }
 
-// app.UseHttpsRedirection();
-
 app.MapHealthChecks("health", new HealthCheckOptions
 {
 	ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
@@ -47,14 +43,11 @@ app.UseSerilogRequestLogging();
 
 app.UseExceptionHandler();
 
-// app.UseAuthentication();
-
-// app.UseAuthorization();
-
-await app.RunAsync();
+await app.RunAsync().ConfigureAwait(false);
 
 namespace ContentService.Web.Api
 {
 	[SuppressMessage("ReSharper", "PartialTypeWithSinglePart")]
+	[SuppressMessage("Maintainability", "CA1515:Consider making public types internal")]
 	public partial class Program;
 }

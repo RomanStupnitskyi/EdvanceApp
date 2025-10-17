@@ -14,17 +14,19 @@ public class DeleteCourseCommandHandler(
 {
 	public async Task<Result> Handle(DeleteCourseCommand command, CancellationToken cancellationToken)
 	{
+		ArgumentNullException.ThrowIfNull(command);
+		
 		var course = await dbContext.Courses
-			.SingleOrDefaultAsync(c => c.Id == command.CourseId, cancellationToken);
+			.SingleOrDefaultAsync(c => c.Id == command.CourseId, cancellationToken).ConfigureAwait(false);
 
 		if (course is null)
 			return Result.Failure(CourseErrors.NotFound(command.CourseId));
 
 		dbContext.Courses.Remove(course);
-		await dbContext.SaveChangesAsync(cancellationToken);
+		await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 		
 		var cacheKey = $"course:{command.CourseId}";
-		await cache.RemoveAsync(cacheKey, cancellationToken: cancellationToken);
+		await cache.RemoveAsync(cacheKey, cancellationToken: cancellationToken).ConfigureAwait(false);
 
 		return Result.Success();
 	}

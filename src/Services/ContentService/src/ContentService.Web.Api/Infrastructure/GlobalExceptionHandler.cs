@@ -6,12 +6,19 @@ namespace ContentService.Web.Api.Infrastructure;
 internal sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
 	: IExceptionHandler
 {
+	
+	private static readonly Action<ILogger, string, Exception?> LogException =
+		LoggerMessage.Define<string>(
+			LogLevel.Information,
+			new EventId(1, nameof(LogException)),
+			"Unhandled exception occurred {Exception}");
+	
 	public async ValueTask<bool> TryHandleAsync(
 		HttpContext httpContext,
 		Exception exception,
 		CancellationToken cancellationToken)
 	{
-		logger.LogError(exception, "Unhandled exception occurred");
+		LogException(logger, exception.ToString(), null);
 
 		var problemDetails = new ProblemDetails
 		{
@@ -22,7 +29,7 @@ internal sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> log
 
 		httpContext.Response.StatusCode = problemDetails.Status.Value;
 
-		await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
+		await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken).ConfigureAwait(false);
 
 		return true;
 	}

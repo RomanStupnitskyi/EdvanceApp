@@ -3,7 +3,7 @@ using ContentService.Application.Abstractions.Data;
 using ContentService.Application.Messaging;
 using Microsoft.EntityFrameworkCore;
 
-namespace ContentService.Application.Submissions.Get;
+namespace ContentService.Application.Submissions.GetMany;
 
 public class GetSubmissionsQueryHandler(
 	IApplicationDbContext dbContext) : IQueryHandler<GetSubmissionsQuery, List<GetSubmissionResponse>>
@@ -14,7 +14,7 @@ public class GetSubmissionsQueryHandler(
 	{
 		var submissions = await dbContext.AssignmentSubmissions
 			.Select(submission => new GetSubmissionResponse(submission))
-			.ToListAsync(cancellationToken: cancellationToken);
+			.ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
 		return Result.Success(submissions);
 	}

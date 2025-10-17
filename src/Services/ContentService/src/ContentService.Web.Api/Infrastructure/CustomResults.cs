@@ -1,11 +1,15 @@
-﻿using ContentService.SharedKernel;
+﻿using System.Diagnostics.CodeAnalysis;
+using ContentService.SharedKernel;
 
 namespace ContentService.Web.Api.Infrastructure;
 
+[SuppressMessage("Maintainability", "CA1515:Consider making public types internal")]
 public static class CustomResults
 {
 	public static IResult Problem(Result result)
 	{
+		ArgumentNullException.ThrowIfNull(result);
+		
 		if (result.IsSuccess)
 			throw new InvalidOperationException();
 
@@ -16,7 +20,7 @@ public static class CustomResults
 			statusCode: GetStatusCode(result.Error.Type),
 			extensions: GetErrors(result));
 		
-		static string GetTitle(Error error) =>
+		static string GetTitle(ApiError error) =>
 			error.Type switch
 			{
 				ErrorType.Validation => error.Code,
@@ -26,7 +30,7 @@ public static class CustomResults
 				_ => "Server failure"
 			};
 		
-		static string GetDetail(Error error) =>
+		static string GetDetail(ApiError error) =>
 			error.Type switch
 			{
 				ErrorType.Validation => error.Description,

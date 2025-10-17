@@ -15,10 +15,10 @@ public static class ValidationDecorator
 	{
 		public async Task<Result<TResponse>> Handle(TCommand command, CancellationToken cancellationToken)
 		{
-			var validationFailures = await ValidateAsync(command, validators);
+			var validationFailures = await ValidateAsync(command, validators).ConfigureAwait(false);
 			
 			if (validationFailures.Length == 0)
-				return await innerHandler.Handle(command, cancellationToken);
+				return await innerHandler.Handle(command, cancellationToken).ConfigureAwait(false);
 			
 			return Result.Failure<TResponse>(CreateValidationError(validationFailures));
 		}
@@ -32,10 +32,10 @@ public static class ValidationDecorator
 	{
 		public async Task<Result> Handle(TCommand command, CancellationToken cancellationToken)
 		{
-			var validationFailures = await ValidateAsync(command, validators);
+			var validationFailures = await ValidateAsync(command, validators).ConfigureAwait(false);
 			
 			if (validationFailures.Length == 0)
-				return await innerHandler.Handle(command, cancellationToken);
+				return await innerHandler.Handle(command, cancellationToken).ConfigureAwait(false);
 			
 			return Result.Failure(CreateValidationError(validationFailures));
 		}
@@ -52,18 +52,15 @@ public static class ValidationDecorator
 		var context = new ValidationContext<TCommand>(command);
 		
 		ValidationResult[] validationResults = await Task.WhenAll(
-			enumerable.Select(v => v.ValidateAsync(context)));
+			enumerable.Select(v => v.ValidateAsync(context))).ConfigureAwait(false);
 
-		ValidationFailure[] failures = validationResults
+		ValidationFailure[] failures = [.. validationResults
 			.Where(result => !result.IsValid)
-			.SelectMany(result => result.Errors)
-			.ToArray();
+			.SelectMany(result => result.Errors)];
 
 		return failures;
 	}
 	
 	private static ValidationError CreateValidationError(ValidationFailure[] validationFailures) =>
-		new(validationFailures
-			.Select(failure => Error.Problem(failure.ErrorCode, failure.ErrorMessage))
-			.ToArray());
+		new([.. validationFailures.Select(failure => ApiError.Problem(failure.ErrorCode, failure.ErrorMessage))]);
 }

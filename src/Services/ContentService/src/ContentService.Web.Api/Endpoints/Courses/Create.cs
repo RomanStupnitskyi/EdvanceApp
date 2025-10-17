@@ -1,4 +1,5 @@
-﻿using ContentService.Application.Courses.Create;
+﻿using System.Diagnostics.CodeAnalysis;
+using ContentService.Application.Courses.Create;
 using ContentService.Application.Messaging;
 using ContentService.Domain.Courses.DTOs;
 using ContentService.Web.Api.Extensions;
@@ -6,6 +7,7 @@ using ContentService.Web.Api.Infrastructure;
 
 namespace ContentService.Web.Api.Endpoints.Courses;
 
+[SuppressMessage("Maintainability", "CA1515:Consider making public types internal")]
 public class Create : IEndpoint
 {
 	public void MapEndpoint(IEndpointRouteBuilder app)
@@ -20,10 +22,10 @@ public class Create : IEndpoint
 					Title = dto.Title,
 					Description = dto.Description,
 					IsVisible = dto.IsVisible,
-					CreatedBy = Guid.Empty // TODO: Implement user context to get the actual user ID
+					CreatedBy = Guid.Empty
 				};
 				
-				var result = await handler.Handle(command, cancellationToken);
+				var result = await handler.Handle(command, cancellationToken).ConfigureAwait(false);
 
 				return result.Match(Results.Ok, CustomResults.Problem);
 			})

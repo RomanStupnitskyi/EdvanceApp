@@ -16,8 +16,10 @@ public class UpdateAssignmentCommandHandler(
 		UpdateAssignmentCommand command,
 		CancellationToken cancellationToken)
 	{
+		ArgumentNullException.ThrowIfNull(command);
+		
 		var assignment = await dbContext.Assignments
-			.SingleOrDefaultAsync(assignment => assignment.Id == command.AssignmentId, cancellationToken);
+			.SingleOrDefaultAsync(assignment => assignment.Id == command.AssignmentId, cancellationToken).ConfigureAwait(false);
 
 		if (assignment == null)
 			return Result.Failure<UpdateAssignmentResponse>(AssignmentErrors.NotFound(command.AssignmentId));
@@ -43,10 +45,10 @@ public class UpdateAssignmentCommandHandler(
 		if (command.EndDate != assignment.EndDate && command.EndDate.HasValue)
 			assignment.EndDate = command.EndDate.Value;
 
-		await dbContext.SaveChangesAsync(cancellationToken);
+		await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 		
 		var cacheKey = $"assignment:{assignment.Id}";
-		await cache.RemoveAsync(cacheKey, cancellationToken);
+		await cache.RemoveAsync(cacheKey, cancellationToken).ConfigureAwait(false);
 
 		return Result.Success(new UpdateAssignmentResponse(assignment));
 	}

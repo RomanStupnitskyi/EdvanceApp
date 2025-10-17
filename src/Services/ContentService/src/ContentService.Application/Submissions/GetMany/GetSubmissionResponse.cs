@@ -1,6 +1,6 @@
 ﻿using ContentService.Domain.AssignmentSubmissions;
 
-namespace ContentService.Application.Submissions.Get;
+namespace ContentService.Application.Submissions.GetMany;
 
 public class GetSubmissionResponse(AssignmentSubmission submission)
 {

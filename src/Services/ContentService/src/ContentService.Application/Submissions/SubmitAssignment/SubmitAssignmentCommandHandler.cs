@@ -15,9 +15,13 @@ public class SubmitAssignmentCommandHandler(
 		SubmitAssignmentCommand command,
 		CancellationToken cancellationToken)
 	{
+		ArgumentNullException.ThrowIfNull(command);
+		
 		var query = new GetAssignmentByIdQuery(command.AssignmentId);
 
-		var getAssignmentResult = await getAssignmentHandler.Handle(query, cancellationToken);
+		var getAssignmentResult = await getAssignmentHandler
+			.Handle(query, cancellationToken)
+			.ConfigureAwait(false);
 
 		if (getAssignmentResult.IsFailure)
 			return Result.Failure<AssignmentSubmittedResponse>(
@@ -32,9 +36,11 @@ public class SubmitAssignmentCommandHandler(
 			SubmittedAt = DateTime.UtcNow
 		};
 		
-		await dbContext.AssignmentSubmissions.AddAsync(assignmentSubmission, cancellationToken);
+		await dbContext.AssignmentSubmissions
+			.AddAsync(assignmentSubmission, cancellationToken)
+			.ConfigureAwait(false);
 		
-		await dbContext.SaveChangesAsync(cancellationToken);
+		await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
 		return Result.Success(new AssignmentSubmittedResponse(assignmentSubmission));
 	}

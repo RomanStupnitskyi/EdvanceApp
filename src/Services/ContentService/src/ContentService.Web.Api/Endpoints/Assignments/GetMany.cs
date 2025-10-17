@@ -1,11 +1,13 @@
-﻿using ContentService.Application.Assignments.Get;
+﻿using System.Diagnostics.CodeAnalysis;
+using ContentService.Application.Assignments.GetMany;
 using ContentService.Application.Messaging;
 using ContentService.Web.Api.Extensions;
 using ContentService.Web.Api.Infrastructure;
 
 namespace ContentService.Web.Api.Endpoints.Assignments;
 
-public class Get : IEndpoint
+[SuppressMessage("Maintainability", "CA1515:Consider making public types internal")]
+public class GetMany : IEndpoint
 {
 	public void MapEndpoint(IEndpointRouteBuilder app)
 	{
@@ -13,7 +15,7 @@ public class Get : IEndpoint
 			IQueryHandler<GetAssignmentQuery, List<GetAssignmentResponse>> handler,
 			CancellationToken cancellationToken) =>
 		{
-			var result = await handler.Handle(new GetAssignmentQuery(), cancellationToken);
+			var result = await handler.Handle(new GetAssignmentQuery(), cancellationToken).ConfigureAwait(false);
 
 			return result.Match(Results.Ok, CustomResults.Problem);
 		})

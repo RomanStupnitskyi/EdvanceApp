@@ -1,9 +1,12 @@
-﻿using ContentService.Application;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using ContentService.Application;
 using ContentService.Web.Api.Infrastructure;
 using MassTransit;
 
 namespace ContentService.Web.Api;
 
+[SuppressMessage("Maintainability", "CA1515:Consider making public types internal")]
 public static class DependencyInjection
 {
 	public static IServiceCollection AddPresentation(
@@ -31,15 +34,15 @@ public static class DependencyInjection
 				.UsingRabbitMq((context, factoryConfigurator) =>
 					{
 						factoryConfigurator.Host(configuration["MessageBroker:Hostname"]
-								?? throw new Exception("RabbitMQ Hostname is not configured"),
-							ushort.Parse(configuration["MessageBroker:Port"] ?? "5672"),
+								?? throw new InvalidOperationException("RabbitMQ Hostname is not configured"), 
+							ushort.Parse(configuration["MessageBroker:Port"] ?? "5672", CultureInfo.InvariantCulture), 
 							"/",
 							hostConfigurator =>
 							{
 								hostConfigurator.Username(configuration["MessageBroker:Username"]
-								    ?? throw new Exception("RabbitMQ Username is not configured"));
+								    ?? throw new InvalidOperationException("RabbitMQ Username is not configured"));
 								hostConfigurator.Password(configuration["MessageBroker:Password"]
-								    ?? throw new Exception("RabbitMQ Password is not configured"));
+								    ?? throw new InvalidOperationException("RabbitMQ Password is not configured"));
 							});
 					
 						factoryConfigurator.ConfigureEndpoints(context);

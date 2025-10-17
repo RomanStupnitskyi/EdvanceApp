@@ -3,7 +3,7 @@ using ContentService.Application.Abstractions.Data;
 using ContentService.Application.Messaging;
 using Microsoft.EntityFrameworkCore;
 
-namespace ContentService.Application.Courses.Get;
+namespace ContentService.Application.Courses.GetMany;
 
 public class GetCourseQueryHandler(IApplicationDbContext dbContext)
 	: IQueryHandler<GetCoursesQuery, List<GetCourseResponse>>
@@ -14,7 +14,7 @@ public class GetCourseQueryHandler(IApplicationDbContext dbContext)
 	{
 		var courses = await dbContext.Courses
 			.Select(course => new GetCourseResponse(course))
-			.ToListAsync(cancellationToken);
+			.ToListAsync(cancellationToken).ConfigureAwait(false);
 		
 		return Result.Success(courses);
 	}
