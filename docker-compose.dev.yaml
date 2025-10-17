@@ -16,21 +16,6 @@ services:
   edvance.redis:
     ports:
       - "6379:6379"
-    
-  edvance.clamav:
-    ports:
-      - "3310:3310"
-        
-  edvance.minio:
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    command: server /data --console-address ":9001"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 30s
-      timeout: 20s
-      retries: 3
         
   edvance.content-service:
     ports:
@@ -47,13 +32,5 @@ services:
   edvance.api-gateway:
     ports:
       - "5000:5000"
-      - "5001:5001"
     environment:
-      - ASPNETCORE_HTTP_PORTS=5000
-      - ASPNETCORE_HTTPS_PORTS=5001
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERTIFICATE_PASSWORD:-password}
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/run/secrets/edvance.cert
-
-secrets:
-  edvance.cert:
-    file: ./certs/edvance.dev.api-gateway.tls.pfx
+      - ASPNETCORE_URLS=http://+:5000

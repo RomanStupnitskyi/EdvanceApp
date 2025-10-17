@@ -8,15 +8,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "src\Services", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ContentService", "src\Services\ContentService", "{65EB2DAB-9133-468C-B759-42C00DA85A36}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentService.Application", "src\Services\ContentService\ContentService.Application\ContentService.Application.csproj", "{9A6CAFC5-9785-449E-AF15-F1615B2851FB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentService.Application", "src\Services\ContentService\src\ContentService.Application\ContentService.Application.csproj", "{9A6CAFC5-9785-449E-AF15-F1615B2851FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentService.Domain", "src\Services\ContentService\ContentService.Domain\ContentService.Domain.csproj", "{C7BE5469-A386-41FA-9021-664373F4D3A3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentService.Domain", "src\Services\ContentService\src\ContentService.Domain\ContentService.Domain.csproj", "{C7BE5469-A386-41FA-9021-664373F4D3A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentService.SharedKernel", "src\Services\ContentService\ContentService.SharedKernel\ContentService.SharedKernel.csproj", "{595B862F-F2CB-40F6-B360-0F935CD362EE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentService.SharedKernel", "src\Services\ContentService\src\ContentService.SharedKernel\ContentService.SharedKernel.csproj", "{595B862F-F2CB-40F6-B360-0F935CD362EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentService.Web.Api", "src\Services\ContentService\ContentService.Web.Api\ContentService.Web.Api.csproj", "{9C0E46E8-A5F7-4CDA-8A2F-B2F4B736D106}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentService.Web.Api", "src\Services\ContentService\src\ContentService.Web.Api\ContentService.Web.Api.csproj", "{9C0E46E8-A5F7-4CDA-8A2F-B2F4B736D106}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentService.Infrastructure", "src\Services\ContentService\ContentService.Infrastructure\ContentService.Infrastructure.csproj", "{299A7A56-F1F9-4AA8-B7B0-72956DA2173E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentService.Infrastructure", "src\Services\ContentService\src\ContentService.Infrastructure\ContentService.Infrastructure.csproj", "{299A7A56-F1F9-4AA8-B7B0-72956DA2173E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiGateway.Web.Api", "src\ApiGateway\ApiGateway.Web.Api\ApiGateway.Web.Api.csproj", "{B8B6B8C4-6231-4ABE-AAB4-CFF67DB8C54A}"
 EndProject
@@ -28,6 +28,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{769E68F0-FF1C-4639-81FB-833BEB6BF578}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{EE82D11D-16AF-4581-8275-1782234FD37C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,12 +41,14 @@ Global
 		{805C219F-01B3-4326-82BD-2839BCF63B51} = {D1786505-74E4-4661-8D2B-DE75A6A7DCFF}
 		{DFB1C78B-C334-4B7D-8F6C-BB2B0FEE13D0} = {D1786505-74E4-4661-8D2B-DE75A6A7DCFF}
 		{65EB2DAB-9133-468C-B759-42C00DA85A36} = {DFB1C78B-C334-4B7D-8F6C-BB2B0FEE13D0}
-		{9A6CAFC5-9785-449E-AF15-F1615B2851FB} = {65EB2DAB-9133-468C-B759-42C00DA85A36}
-		{C7BE5469-A386-41FA-9021-664373F4D3A3} = {65EB2DAB-9133-468C-B759-42C00DA85A36}
-		{595B862F-F2CB-40F6-B360-0F935CD362EE} = {65EB2DAB-9133-468C-B759-42C00DA85A36}
-		{9C0E46E8-A5F7-4CDA-8A2F-B2F4B736D106} = {65EB2DAB-9133-468C-B759-42C00DA85A36}
-		{299A7A56-F1F9-4AA8-B7B0-72956DA2173E} = {65EB2DAB-9133-468C-B759-42C00DA85A36}
 		{B8B6B8C4-6231-4ABE-AAB4-CFF67DB8C54A} = {805C219F-01B3-4326-82BD-2839BCF63B51}
+		{769E68F0-FF1C-4639-81FB-833BEB6BF578} = {65EB2DAB-9133-468C-B759-42C00DA85A36}
+		{EE82D11D-16AF-4581-8275-1782234FD37C} = {65EB2DAB-9133-468C-B759-42C00DA85A36}
+		{9A6CAFC5-9785-449E-AF15-F1615B2851FB} = {769E68F0-FF1C-4639-81FB-833BEB6BF578}
+		{C7BE5469-A386-41FA-9021-664373F4D3A3} = {769E68F0-FF1C-4639-81FB-833BEB6BF578}
+		{299A7A56-F1F9-4AA8-B7B0-72956DA2173E} = {769E68F0-FF1C-4639-81FB-833BEB6BF578}
+		{595B862F-F2CB-40F6-B360-0F935CD362EE} = {769E68F0-FF1C-4639-81FB-833BEB6BF578}
+		{9C0E46E8-A5F7-4CDA-8A2F-B2F4B736D106} = {769E68F0-FF1C-4639-81FB-833BEB6BF578}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{9A6CAFC5-9785-449E-AF15-F1615B2851FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
