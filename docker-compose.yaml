@@ -36,6 +36,11 @@
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER:-guest}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS:-guest}
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - edvance-net
  
@@ -55,10 +60,14 @@
       context: .
       dockerfile: src/Services/ContentService/src/ContentService.Web.Api/Dockerfile
     depends_on:
-      - edvance.database
-      - edvance.rabbitmq
-      - edvance.redis
-      - edvance.keycloak
+      edvance.database :
+        condition: service_started
+      edvance.rabbitmq:
+        condition: service_healthy  
+      edvance.redis:
+        condition: service_started
+      edvance.keycloak:
+        condition: service_started
     environment:
       - MessageBroker__Hostname=edvance.rabbitmq
       - MessageBroker__Port=5672
