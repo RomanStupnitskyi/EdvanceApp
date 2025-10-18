@@ -17,11 +17,9 @@ public class CreateAssignmentCommandHandler(
 		CreateAssignmentCommand command,
 		CancellationToken cancellationToken)
 	{
-		ArgumentNullException.ThrowIfNull(command);
-		
 		var query = new GetCourseByIdQuery(command.CourseId);
 		
-		var result = await getCourseHandler.Handle(query, cancellationToken).ConfigureAwait(false);
+		Result<CourseByIdResponse> result = await getCourseHandler.Handle(query, cancellationToken).ConfigureAwait(false);
 		
 		if (result.IsFailure)
 			return Result.Failure<CreateAssignmentResponse>(
@@ -43,7 +41,7 @@ public class CreateAssignmentCommandHandler(
 		await dbContext.Assignments.AddAsync(assignment, cancellationToken).ConfigureAwait(false);
 		await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 		
-		var cacheKey = $"assignment:{assignment.Id}";
+		string cacheKey = $"assignment:{assignment.Id}";
 		await cache.SetAsync(cacheKey, assignment, cancellationToken: cancellationToken).ConfigureAwait(false);
 		
 		return Result.Success(new CreateAssignmentResponse(assignment));

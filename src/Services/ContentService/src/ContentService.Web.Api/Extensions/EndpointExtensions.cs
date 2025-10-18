@@ -12,14 +12,11 @@ public static class EndpointExtensions
 		this IServiceCollection services,
 		Assembly assembly)
 	{
-		ArgumentNullException.ThrowIfNull(assembly);
-		
-		var serviceDescriptors = assembly
+		ServiceDescriptor[] serviceDescriptors = [.. assembly
 			.DefinedTypes
 			.Where(type => type is { IsAbstract: false, IsInterface: false } &&
 			               type.IsAssignableTo(typeof(IEndpoint)))
-			.Select(type => ServiceDescriptor.Transient(typeof(IEndpoint), type))
-			.ToArray();
+			.Select(type => ServiceDescriptor.Transient(typeof(IEndpoint), type))];
 		
 		services.TryAddEnumerable(serviceDescriptors);
 
@@ -30,14 +27,12 @@ public static class EndpointExtensions
 		this WebApplication app,
 		RouteGroupBuilder? routeGroupBuilder = null)
 	{
-		ArgumentNullException.ThrowIfNull(routeGroupBuilder);
-		ArgumentNullException.ThrowIfNull(app);
 		
-		var endpoints = app.Services.GetRequiredService<IEnumerable<IEndpoint>>();
+		IEnumerable<IEndpoint> endpoints = app.Services.GetRequiredService<IEnumerable<IEndpoint>>();
 
-		IEndpointRouteBuilder builder = routeGroupBuilder;
+		IEndpointRouteBuilder builder = (IEndpointRouteBuilder)routeGroupBuilder ?? app;
 		
-		foreach (var endpoint in endpoints)
+		foreach (IEndpoint endpoint in endpoints)
 		{
 			endpoint.MapEndpoint(builder);
 		}

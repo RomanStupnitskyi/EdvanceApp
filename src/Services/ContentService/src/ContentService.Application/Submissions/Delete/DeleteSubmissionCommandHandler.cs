@@ -13,9 +13,7 @@ public class DeleteSubmissionCommandHandler(
 		DeleteSubmissionCommand command,
 		CancellationToken cancellationToken)
 	{
-		ArgumentNullException.ThrowIfNull(command);
-		
-		var submission = await dbContext.AssignmentSubmissions
+		AssignmentSubmission? submission = await dbContext.AssignmentSubmissions
 			.SingleOrDefaultAsync(submission => submission.Id == command.SubmissionId, cancellationToken).ConfigureAwait(false);
 
 		if (submission is null)

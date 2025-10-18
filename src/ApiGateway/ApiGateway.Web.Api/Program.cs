@@ -1,7 +1,7 @@
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // ----------------------------------------------------------------
 // -- Add services to the container.
@@ -33,7 +33,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSwaggerForOcelot(builder.Configuration);
 
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // ----------------------------------------------------------------
 // -- Add middleware to the request pipeline.

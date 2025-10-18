@@ -10,7 +10,7 @@ public class GetAssignmentQueryHandler(IApplicationDbContext dbContext)
 {
 	public async Task<Result<List<GetAssignmentResponse>>> Handle(GetAssignmentQuery query, CancellationToken cancellationToken)
 	{
-		var assignments = await dbContext.Assignments
+		List<GetAssignmentResponse> assignments = await dbContext.Assignments
 			.Select(assignment => new GetAssignmentResponse(assignment))
 			.ToListAsync(cancellationToken).ConfigureAwait(false);
 

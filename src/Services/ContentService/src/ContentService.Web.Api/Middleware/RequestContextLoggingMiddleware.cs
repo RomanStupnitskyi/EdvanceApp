@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Primitives;
 using Serilog.Context;
 
 namespace ContentService.Web.Api.Middleware;
@@ -10,8 +11,6 @@ public class RequestContextLoggingMiddleware(RequestDelegate next)
 
 	public Task Invoke(HttpContext context)
 	{
-		ArgumentNullException.ThrowIfNull(context);
-		
 		using (LogContext.PushProperty("CorrelationId", GetCorrelationId(context)))
 		{
 			return next.Invoke(context);
@@ -22,7 +21,7 @@ public class RequestContextLoggingMiddleware(RequestDelegate next)
 	{
 		context.Request.Headers.TryGetValue(
 			CorrelationIdHeaderName,
-			out var correlationId);
+			out StringValues correlationId);
 
 		return correlationId.FirstOrDefault() ?? context.TraceIdentifier;
 	}

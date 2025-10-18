@@ -16,9 +16,7 @@ public class UpdateSubmissionCommandHandler(
 		UpdateSubmissionCommand command,
 		CancellationToken cancellationToken)
 	{
-		ArgumentNullException.ThrowIfNull(command);
-		
-		var submission = await dbContext.AssignmentSubmissions
+		AssignmentSubmission? submission = await dbContext.AssignmentSubmissions
 			.SingleOrDefaultAsync(submission => submission.Id == command.SubmissionId, cancellationToken)
 			.ConfigureAwait(false);
 

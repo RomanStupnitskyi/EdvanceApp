@@ -1,6 +1,7 @@
 ﻿using ContentService.SharedKernel;
 using ContentService.Application.Abstractions.Data;
 using ContentService.Application.Messaging;
+using ContentService.Domain.Assignments;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 
@@ -15,7 +16,7 @@ public class DeleteAssignmentsByCourseIdCommandHandler(
 		DeleteAssignmentsByCourseIdCommand command,
 		CancellationToken cancellationToken)
 	{
-		var assignments = await dbContext.Assignments
+		List<Assignment> assignments = await dbContext.Assignments
 			.Where(a => a.CourseId == command.CourseId)
 			.ToListAsync(cancellationToken).ConfigureAwait(false);
 
@@ -24,9 +25,9 @@ public class DeleteAssignmentsByCourseIdCommandHandler(
 				new DeletedAssignmentsResponse { DeletedAssignmentsCount = 0 });
 		
 		dbContext.Assignments.RemoveRange(assignments);
-		var deletedCount = await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+		int deletedCount = await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 		
-		foreach (var cacheKey in assignments.Select(assignment => $"assignment:{assignment.Id}"))
+		foreach (string cacheKey in assignments.Select(assignment => $"assignment:{assignment.Id}"))
 			await cache.RemoveAsync(cacheKey, cancellationToken).ConfigureAwait(false);
 		
 		return Result.Success(new DeletedAssignmentsResponse { DeletedAssignmentsCount = deletedCount });

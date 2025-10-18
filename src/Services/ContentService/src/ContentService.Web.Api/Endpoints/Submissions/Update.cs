@@ -2,6 +2,7 @@
 using ContentService.Application.Messaging;
 using ContentService.Application.Submissions.Update;
 using ContentService.Domain.AssignmentSubmissions.DTOs;
+using ContentService.SharedKernel;
 using ContentService.Web.Api.Extensions;
 using ContentService.Web.Api.Infrastructure;
 
@@ -23,7 +24,7 @@ public class Update : IEndpoint
 				Content = dto.Content
 			};
 			
-			var result = await handler.Handle(command, cancellationToken).ConfigureAwait(false);
+			Result<UpdateSubmissionResponse> result = await handler.Handle(command, cancellationToken).ConfigureAwait(false);
 
 			return result.Match(Results.Ok, CustomResults.Problem);
 		})

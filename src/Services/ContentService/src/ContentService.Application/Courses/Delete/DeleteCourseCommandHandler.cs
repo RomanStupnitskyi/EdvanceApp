@@ -14,9 +14,7 @@ public class DeleteCourseCommandHandler(
 {
 	public async Task<Result> Handle(DeleteCourseCommand command, CancellationToken cancellationToken)
 	{
-		ArgumentNullException.ThrowIfNull(command);
-		
-		var course = await dbContext.Courses
+		Course? course = await dbContext.Courses
 			.SingleOrDefaultAsync(c => c.Id == command.CourseId, cancellationToken).ConfigureAwait(false);
 
 		if (course is null)
@@ -25,7 +23,7 @@ public class DeleteCourseCommandHandler(
 		dbContext.Courses.Remove(course);
 		await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 		
-		var cacheKey = $"course:{command.CourseId}";
+		string cacheKey = $"course:{command.CourseId}";
 		await cache.RemoveAsync(cacheKey, cancellationToken: cancellationToken).ConfigureAwait(false);
 
 		return Result.Success();

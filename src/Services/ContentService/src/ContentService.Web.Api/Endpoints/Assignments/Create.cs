@@ -2,6 +2,7 @@
 using ContentService.Application.Assignments.Create;
 using ContentService.Application.Messaging;
 using ContentService.Domain.Assignments.DTOs;
+using ContentService.SharedKernel;
 using ContentService.Web.Api.Extensions;
 using ContentService.Web.Api.Infrastructure;
 
@@ -30,7 +31,7 @@ public class Create : IEndpoint
 				EndDate = dto.EndDate
 			};
 
-			var result = await handler.Handle(command, cancellationToken).ConfigureAwait(false);
+			Result<CreateAssignmentResponse> result = await handler.Handle(command, cancellationToken).ConfigureAwait(false);
 
 			return result.Match(Results.Ok, CustomResults.Problem);
 		})

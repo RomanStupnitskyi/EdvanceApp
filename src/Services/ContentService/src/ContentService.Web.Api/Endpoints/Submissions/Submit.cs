@@ -2,6 +2,7 @@
 using ContentService.Application.Messaging;
 using ContentService.Application.Submissions.SubmitAssignment;
 using ContentService.Domain.AssignmentSubmissions.DTOs;
+using ContentService.SharedKernel;
 using ContentService.Web.Api.Extensions;
 using ContentService.Web.Api.Infrastructure;
 
@@ -25,7 +26,7 @@ public class Submit : IEndpoint
 				Content = dto.Content
 			};
 
-			var result = await handler.Handle(command, cancellationToken).ConfigureAwait(false);
+			Result<AssignmentSubmittedResponse> result = await handler.Handle(command, cancellationToken).ConfigureAwait(false);
 
 			return result.Match(Results.Ok, CustomResults.Problem);
 		})

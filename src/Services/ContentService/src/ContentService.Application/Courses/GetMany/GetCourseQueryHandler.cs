@@ -12,7 +12,7 @@ public class GetCourseQueryHandler(IApplicationDbContext dbContext)
 		GetCoursesQuery query,
 		CancellationToken cancellationToken)
 	{
-		var courses = await dbContext.Courses
+		List<GetCourseResponse> courses = await dbContext.Courses
 			.Select(course => new GetCourseResponse(course))
 			.ToListAsync(cancellationToken).ConfigureAwait(false);
 		

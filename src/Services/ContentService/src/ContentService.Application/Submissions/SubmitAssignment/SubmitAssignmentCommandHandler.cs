@@ -15,11 +15,9 @@ public class SubmitAssignmentCommandHandler(
 		SubmitAssignmentCommand command,
 		CancellationToken cancellationToken)
 	{
-		ArgumentNullException.ThrowIfNull(command);
-		
 		var query = new GetAssignmentByIdQuery(command.AssignmentId);
 
-		var getAssignmentResult = await getAssignmentHandler
+		Result<AssignmentByIdResponse> getAssignmentResult = await getAssignmentHandler
 			.Handle(query, cancellationToken)
 			.ConfigureAwait(false);
 

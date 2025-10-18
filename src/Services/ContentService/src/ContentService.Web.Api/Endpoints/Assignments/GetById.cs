@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using ContentService.Application.Assignments.GetById;
 using ContentService.Application.Messaging;
+using ContentService.SharedKernel;
 using ContentService.Web.Api.Extensions;
 using ContentService.Web.Api.Infrastructure;
 
@@ -18,7 +19,7 @@ public class GetById : IEndpoint
 		{
 			var query = new GetAssignmentByIdQuery(id);
 		
-			var result = await handler.Handle(query, cancellationToken).ConfigureAwait(false);
+			Result<AssignmentByIdResponse> result = await handler.Handle(query, cancellationToken).ConfigureAwait(false);
 		
 			return result.Match(Results.Ok, CustomResults.Problem);
 		})

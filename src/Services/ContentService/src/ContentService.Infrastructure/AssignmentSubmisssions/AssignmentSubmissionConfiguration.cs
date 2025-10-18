@@ -9,8 +9,6 @@ public class AssignmentSubmissionConfiguration : IEntityTypeConfiguration<Assign
 {
 	public void Configure(EntityTypeBuilder<AssignmentSubmission> builder)
 	{
-		ArgumentNullException.ThrowIfNull(builder);
-		
 		builder.HasKey(submission => submission.Id);
 		
 		builder.Property(submission => submission.StudentId)

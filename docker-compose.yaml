@@ -53,7 +53,7 @@
     container_name: edvance.content-service
     build:
       context: .
-      dockerfile: src/Services/ContentService/ContentService.Web.Api/Dockerfile
+      dockerfile: src/Services/ContentService/src/ContentService.Web.Api/Dockerfile
     depends_on:
       - edvance.database
       - edvance.rabbitmq

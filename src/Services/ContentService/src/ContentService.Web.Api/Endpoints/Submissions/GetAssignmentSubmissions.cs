@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using ContentService.Application.Messaging;
 using ContentService.Application.Submissions.GetByAssignmentId;
+using ContentService.SharedKernel;
 using ContentService.Web.Api.Extensions;
 using ContentService.Web.Api.Infrastructure;
 
@@ -18,7 +19,7 @@ public class GetAssignmentSubmissions : IEndpoint
 		{
 			var query = new GetSubmissionsByAssignmentIdQuery(assignmentId);
 			
-			var result = await handler.Handle(query, cancellationToken).ConfigureAwait(false);
+			Result<List<AssignmentSubmissionResponse>> result = await handler.Handle(query, cancellationToken).ConfigureAwait(false);
 
 			return result.Match(Results.Ok, CustomResults.Problem);
 		})

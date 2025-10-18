@@ -11,10 +11,6 @@ public static class ResultExtensions
 		Func<TOut> onSuccess,
 		Func<Result, TOut> onFailure)
 	{
-		ArgumentNullException.ThrowIfNull(onSuccess);
-		ArgumentNullException.ThrowIfNull(onFailure);
-		ArgumentNullException.ThrowIfNull(result);
-		
 		return result.IsSuccess ? onSuccess() : onFailure(result);
 	}
 
@@ -23,10 +19,6 @@ public static class ResultExtensions
 		Func<TIn, TOut> onSuccess,
 		Func<Result<TIn>, TOut> onFailure)
 	{
-		ArgumentNullException.ThrowIfNull(onSuccess);
-		ArgumentNullException.ThrowIfNull(onFailure);
-		ArgumentNullException.ThrowIfNull(result);
-		
 		return result.IsSuccess ? onSuccess(result.Value) : onFailure(result);
 	}
 }

@@ -11,7 +11,7 @@ public class LayerTests : BaseTest
     public void Domain_Should_NotHaveDependencyOnApplication()
     {
         // Act
-        var testResult = Types.InAssembly(DomainAssembly)
+        TestResult? testResult = Types.InAssembly(DomainAssembly)
             .Should()
             .NotHaveDependencyOn(ApplicationAssembly.GetName().Name)
             .GetResult();
@@ -24,7 +24,7 @@ public class LayerTests : BaseTest
     public void DomainLayer_ShouldNotHaveDependencyOn_InfrastructureLayer()
     {
         // Act
-        var testResult = Types.InAssembly(DomainAssembly)
+        TestResult? testResult = Types.InAssembly(DomainAssembly)
             .Should()
             .NotHaveDependencyOn(InfrastructureAssembly.GetName().FullName)
             .GetResult();
@@ -37,7 +37,7 @@ public class LayerTests : BaseTest
     public void DomainLayer_ShouldNotHaveDependencyOn_WebApiLayer()
     {
         // Act
-        var testResult = Types.InAssembly(DomainAssembly)
+        TestResult? testResult = Types.InAssembly(DomainAssembly)
             .Should()
             .NotHaveDependencyOn(WebApiAssembly.GetName().Name)
             .GetResult();
@@ -49,7 +49,7 @@ public class LayerTests : BaseTest
     [Fact]
     public void ApplicationLayer_ShouldNotHaveDependencyOn_InfrastructureLayer()
     {
-        var result = Types.InAssembly(ApplicationAssembly)
+        TestResult? result = Types.InAssembly(ApplicationAssembly)
             .Should()
             .NotHaveDependencyOn(InfrastructureAssembly.GetName().Name)
             .GetResult();
@@ -60,7 +60,7 @@ public class LayerTests : BaseTest
     [Fact]
     public void ApplicationLayer_ShouldNotHaveDependencyOn_WebApiLayer()
     {
-        var result = Types.InAssembly(ApplicationAssembly)
+        TestResult? result = Types.InAssembly(ApplicationAssembly)
             .Should()
             .NotHaveDependencyOn(WebApiAssembly.GetName().Name)
             .GetResult();
@@ -72,7 +72,7 @@ public class LayerTests : BaseTest
     [SuppressMessage("Globalization", "CA1307:Specify StringComparison for clarity")]
     public void Handlers_Should_Have_DependencyOnDomain()
     {
-        var testResult = Types
+        TestResult? testResult = Types
             .InAssembly(ApplicationAssembly)
             .That()
             .HaveNameEndingWith("Handler")
@@ -87,7 +87,7 @@ public class LayerTests : BaseTest
     [Fact]
     public void InfrastructureLayer_ShouldNotHaveDependencyOn_WebApiLayer()
     {
-        var result = Types.InAssembly(InfrastructureAssembly)
+        TestResult? result = Types.InAssembly(InfrastructureAssembly)
             .Should()
             .NotHaveDependencyOn(WebApiAssembly.GetName().Name)
             .GetResult();

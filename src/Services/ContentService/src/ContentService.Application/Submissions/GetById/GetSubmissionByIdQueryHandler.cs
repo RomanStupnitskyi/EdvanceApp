@@ -16,17 +16,13 @@ public class GetSubmissionByIdQueryHandler(
 		GetSubmissionByIdQuery query,
 		CancellationToken cancellationToken)
 	{
-		ArgumentNullException.ThrowIfNull(query);
-		
-		var cacheKey = $"submission:{query.SubmissionId}";
-		var submission = await cache.GetOrCreateAsync(cacheKey, async entry =>
-		{
-			return await dbContext.AssignmentSubmissions
-				.Where(submission => submission.Id == query.SubmissionId)
-				.Select(submission => new GetSubmissionByIdResponse(submission))
-				.SingleOrDefaultAsync(entry)
-				.ConfigureAwait(false);
-		}, cancellationToken: cancellationToken).ConfigureAwait(false);
+		string cacheKey = $"submission:{query.SubmissionId}";
+		GetSubmissionByIdResponse? submission = await cache.GetOrCreateAsync(cacheKey, async entry 
+            => await dbContext.AssignmentSubmissions
+                .Where(submission => submission.Id == query.SubmissionId)
+                .Select(submission => new GetSubmissionByIdResponse(submission))
+                .SingleOrDefaultAsync(entry)
+                .ConfigureAwait(false), cancellationToken: cancellationToken).ConfigureAwait(false);
 		
 		if (submission is null)
 			return Result.Failure<GetSubmissionByIdResponse>(

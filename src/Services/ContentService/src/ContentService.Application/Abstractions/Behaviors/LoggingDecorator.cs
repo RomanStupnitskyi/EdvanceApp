@@ -51,11 +51,11 @@ public static class LoggingDecorator
     {
         public async Task<Result<TResponse>> Handle(TCommand command, CancellationToken cancellationToken)
         {
-            var commandName = typeof(TCommand).Name;
+            string commandName = typeof(TCommand).Name;
             
             ProcessingCommand(logger, commandName, null);
             
-            var result = await innerHandler.Handle(command, cancellationToken).ConfigureAwait(false);
+            Result<TResponse> result = await innerHandler.Handle(command, cancellationToken).ConfigureAwait(false);
             
             if (result.IsSuccess)
                 CompletedCommand(logger, commandName, null);
@@ -79,11 +79,11 @@ public static class LoggingDecorator
     {
         public async Task<Result> Handle(TCommand command, CancellationToken cancellationToken)
         {
-            var commandName = typeof(TCommand).Name;
+            string commandName = typeof(TCommand).Name;
             
             ProcessingCommand(logger, commandName, null);
             
-            var result = await innerHandler.Handle(command, cancellationToken).ConfigureAwait(false);
+            Result result = await innerHandler.Handle(command, cancellationToken).ConfigureAwait(false);
             
             if (result.IsSuccess)
                 CompletedCommand(logger, commandName, null);
@@ -107,11 +107,11 @@ public static class LoggingDecorator
     {
         public async Task<Result<TResponse>> Handle(TQuery query, CancellationToken cancellationToken)
         {
-            var queryName = typeof(TQuery).Name;
+            string queryName = typeof(TQuery).Name;
             
             ProcessingQuery(logger, queryName, null);
             
-            var result = await innerHandler.Handle(query, cancellationToken).ConfigureAwait(false);
+            Result<TResponse> result = await innerHandler.Handle(query, cancellationToken).ConfigureAwait(false);
             
             if (result.IsSuccess)
                 CompletedQuery(logger, queryName, null);

@@ -14,9 +14,7 @@ public class UpdateCourseCommandHandler(
 {
 	public async Task<Result<UpdateCourseResponse>> Handle(UpdateCourseCommand command, CancellationToken cancellationToken)
 	{
-		ArgumentNullException.ThrowIfNull(command);
-		
-		var course = await dbContext.Courses
+		Course? course = await dbContext.Courses
 			.SingleOrDefaultAsync(c => c.Id == command.CourseId, cancellationToken).ConfigureAwait(false);
 
 		if (course is null)
@@ -36,7 +34,7 @@ public class UpdateCourseCommandHandler(
 
 		await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 		
-		var cacheKey = $"course:{course.Id}";
+		string cacheKey = $"course:{course.Id}";
 		await cache.SetAsync(cacheKey, course, cancellationToken: cancellationToken).ConfigureAwait(false);
 
 		return Result.Success(new UpdateCourseResponse(course));

@@ -14,11 +14,9 @@ public class GetCourseByIdQueryHandler(
 {
 	public async Task<Result<CourseByIdResponse>> Handle(GetCourseByIdQuery query, CancellationToken cancellationToken)
 	{
-		ArgumentNullException.ThrowIfNull(query);
-		
-		var cacheKey = $"course:{query.CourseId}";
+		string cacheKey = $"course:{query.CourseId}";
 
-		var course = await cache.GetOrCreateAsync(cacheKey, async entry =>
+		Course? course = await cache.GetOrCreateAsync(cacheKey, async entry =>
 		{
 			return await dbContext.Courses
 				.Where(course => course.Id == query.CourseId)

@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using ContentService.Application.Assignments.GetByCourseId;
 using ContentService.Application.Messaging;
+using ContentService.SharedKernel;
 using ContentService.Web.Api.Extensions;
 using ContentService.Web.Api.Infrastructure;
 
@@ -18,7 +19,7 @@ public class GetByCourseId : IEndpoint
 		{
 			var query = new GetAssignmentByCourseIdQuery(courseId);
 
-			var result = await getAssignmentsHandler.Handle(query, cancellationToken).ConfigureAwait(false);
+			Result<List<CourseAssignmentResponse>> result = await getAssignmentsHandler.Handle(query, cancellationToken).ConfigureAwait(false);
 
 			return result.Match(Results.Ok, CustomResults.Problem);
 		})

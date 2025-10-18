@@ -2,6 +2,7 @@
 using ContentService.Application.Courses.Update;
 using ContentService.Application.Messaging;
 using ContentService.Domain.Courses.DTOs;
+using ContentService.SharedKernel;
 using ContentService.Web.Api.Extensions;
 using ContentService.Web.Api.Infrastructure;
 
@@ -25,7 +26,7 @@ public class Update : IEndpoint
 				IsVisible = dto.IsVisible
 			};
 
-			var result = await handler.Handle(command, cancellationToken).ConfigureAwait(false);
+			Result<UpdateCourseResponse> result = await handler.Handle(command, cancellationToken).ConfigureAwait(false);
 
 			return result.Match(Results.Ok, CustomResults.Problem);
 		})

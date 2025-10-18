@@ -16,17 +16,15 @@ public class GetSubmissionsByAssignmentIdQueryHandler(
 		GetSubmissionsByAssignmentIdQuery query,
 		CancellationToken cancellationToken)
 	{
-		ArgumentNullException.ThrowIfNull(query);
-		
 		var assignmentQuery = new GetAssignmentByIdQuery(query.AssignmentId);
 
-		var assignment = await handler.Handle(assignmentQuery, cancellationToken).ConfigureAwait(false);
+		Result<AssignmentByIdResponse> assignment = await handler.Handle(assignmentQuery, cancellationToken).ConfigureAwait(false);
 
 		if (assignment.IsFailure)
 			return Result.Failure<List<AssignmentSubmissionResponse>>(
 				AssignmentSubmissionErrors.AssignmentNotFound(query.AssignmentId));
 		
-		var submissions = await dbContext.AssignmentSubmissions
+		List<AssignmentSubmissionResponse> submissions = await dbContext.AssignmentSubmissions
 			.Where(submission => submission.AssignmentId == query.AssignmentId)
 			.Select(submission => new AssignmentSubmissionResponse(submission))
 			.ToListAsync(cancellationToken).ConfigureAwait(false);

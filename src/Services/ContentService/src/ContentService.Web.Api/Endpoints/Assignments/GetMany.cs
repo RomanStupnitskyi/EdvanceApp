@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using ContentService.Application.Assignments.GetMany;
 using ContentService.Application.Messaging;
+using ContentService.SharedKernel;
 using ContentService.Web.Api.Extensions;
 using ContentService.Web.Api.Infrastructure;
 
@@ -15,7 +16,7 @@ public class GetMany : IEndpoint
 			IQueryHandler<GetAssignmentQuery, List<GetAssignmentResponse>> handler,
 			CancellationToken cancellationToken) =>
 		{
-			var result = await handler.Handle(new GetAssignmentQuery(), cancellationToken).ConfigureAwait(false);
+			Result<List<GetAssignmentResponse>> result = await handler.Handle(new GetAssignmentQuery(), cancellationToken).ConfigureAwait(false);
 
 			return result.Match(Results.Ok, CustomResults.Problem);
 		})

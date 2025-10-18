@@ -12,7 +12,7 @@ public class GetSubmissionsQueryHandler(
 		GetSubmissionsQuery query,
 		CancellationToken cancellationToken)
 	{
-		var submissions = await dbContext.AssignmentSubmissions
+		List<GetSubmissionResponse> submissions = await dbContext.AssignmentSubmissions
 			.Select(submission => new GetSubmissionResponse(submission))
 			.ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 

@@ -8,12 +8,12 @@ public static class CustomResults
 {
 	public static IResult Problem(Result result)
 	{
-		ArgumentNullException.ThrowIfNull(result);
-		
 		if (result.IsSuccess)
-			throw new InvalidOperationException();
+        {
+            throw new InvalidOperationException();
+        }
 
-		return Results.Problem(
+        return Results.Problem(
 			title: GetTitle(result.Error),
 			detail: GetDetail(result.Error),
 			type: GetType(result.Error.Type),

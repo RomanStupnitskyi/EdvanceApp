@@ -13,8 +13,6 @@ public class CreateCourseCommandHandler(
 {
 	public async Task<Result<CreateCourseResponse>> Handle(CreateCourseCommand command, CancellationToken cancellationToken)
 	{
-		ArgumentNullException.ThrowIfNull(command);
-		
 		var course = new Course
 		{
 			Title = command.Title,
@@ -26,7 +24,7 @@ public class CreateCourseCommandHandler(
 		await dbContext.Courses.AddAsync(course, cancellationToken).ConfigureAwait(false);
 		await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 		
-		var cacheKey = $"course:{course.Id}";
+		string cacheKey = $"course:{course.Id}";
 		await cache.SetAsync(cacheKey, course, cancellationToken: cancellationToken).ConfigureAwait(false);
 		
 		return Result.Success(new CreateCourseResponse(course));

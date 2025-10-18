@@ -16,9 +16,7 @@ public class UpdateAssignmentCommandHandler(
 		UpdateAssignmentCommand command,
 		CancellationToken cancellationToken)
 	{
-		ArgumentNullException.ThrowIfNull(command);
-		
-		var assignment = await dbContext.Assignments
+		Assignment? assignment = await dbContext.Assignments
 			.SingleOrDefaultAsync(assignment => assignment.Id == command.AssignmentId, cancellationToken).ConfigureAwait(false);
 
 		if (assignment == null)
@@ -47,7 +45,7 @@ public class UpdateAssignmentCommandHandler(
 
 		await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 		
-		var cacheKey = $"assignment:{assignment.Id}";
+		string cacheKey = $"assignment:{assignment.Id}";
 		await cache.RemoveAsync(cacheKey, cancellationToken).ConfigureAwait(false);
 
 		return Result.Success(new UpdateAssignmentResponse(assignment));

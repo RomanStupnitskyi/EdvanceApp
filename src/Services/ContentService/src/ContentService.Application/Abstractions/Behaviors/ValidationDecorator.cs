@@ -15,7 +15,7 @@ public static class ValidationDecorator
 	{
 		public async Task<Result<TResponse>> Handle(TCommand command, CancellationToken cancellationToken)
 		{
-			var validationFailures = await ValidateAsync(command, validators).ConfigureAwait(false);
+			ValidationFailure[] validationFailures = await ValidateAsync(command, validators).ConfigureAwait(false);
 			
 			if (validationFailures.Length == 0)
 				return await innerHandler.Handle(command, cancellationToken).ConfigureAwait(false);
@@ -32,7 +32,7 @@ public static class ValidationDecorator
 	{
 		public async Task<Result> Handle(TCommand command, CancellationToken cancellationToken)
 		{
-			var validationFailures = await ValidateAsync(command, validators).ConfigureAwait(false);
+			ValidationFailure[] validationFailures = await ValidateAsync(command, validators).ConfigureAwait(false);
 			
 			if (validationFailures.Length == 0)
 				return await innerHandler.Handle(command, cancellationToken).ConfigureAwait(false);
@@ -45,7 +45,7 @@ public static class ValidationDecorator
 		TCommand command,
 		IEnumerable<IValidator<TCommand>> validators)
 	{
-		var enumerable = validators.ToArray();
+		IValidator<TCommand>[] enumerable = [.. validators];
 		if (enumerable.Length == 0)
 			return [];
 		

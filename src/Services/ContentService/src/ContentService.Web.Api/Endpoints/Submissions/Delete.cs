@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using ContentService.Application.Messaging;
 using ContentService.Application.Submissions.Delete;
+using ContentService.SharedKernel;
 using ContentService.Web.Api.Extensions;
 using ContentService.Web.Api.Infrastructure;
 
@@ -18,7 +19,7 @@ public class Delete : IEndpoint
 		{
 			var command = new DeleteSubmissionCommand(submissionId);
 
-			var result = await handler.Handle(command, cancellationToken).ConfigureAwait(false);
+			Result result = await handler.Handle(command, cancellationToken).ConfigureAwait(false);
 
 			return result.Match(Results.NoContent, CustomResults.Problem);
 		})

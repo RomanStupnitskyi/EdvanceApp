@@ -14,10 +14,8 @@ public class GetAssignmentByIdQueryHandler(
 {
 	public async Task<Result<AssignmentByIdResponse>> Handle(GetAssignmentByIdQuery query, CancellationToken cancellationToken)
 	{
-		ArgumentNullException.ThrowIfNull(query);
-		
-		var cacheKey = $"assignment:{query.AssignmentId}";
-		var assignment = await cache.GetOrCreateAsync(cacheKey, async entry =>
+		string cacheKey = $"assignment:{query.AssignmentId}";
+		Assignment? assignment = await cache.GetOrCreateAsync(cacheKey, async entry =>
 		{
 			return await dbContext.Assignments
 				.AsNoTracking()
