@@ -19,7 +19,7 @@ public class GetById : IEndpoint
 		{
 			var query = new GetSubmissionByIdQuery(submissionId);
 
-			Result<GetSubmissionByIdResponse> result = await handler.Handle(query, cancellationToken).ConfigureAwait(false);
+			Result<GetSubmissionByIdResponse> result = await handler.Handle(query, cancellationToken);
 
 			return result.Match(Results.Ok, CustomResults.Problem);
 		})

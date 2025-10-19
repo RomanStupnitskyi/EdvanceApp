@@ -6,7 +6,7 @@ using ContentService.Application.Messaging;
 
 namespace ContentService.Application.Submissions.SubmitAssignment;
 
-public class SubmitAssignmentCommandHandler(
+internal sealed class SubmitAssignmentCommandHandler(
 	IQueryHandler<GetAssignmentByIdQuery, AssignmentByIdResponse> getAssignmentHandler,
 	IApplicationDbContext dbContext)
 	: ICommandHandler<SubmitAssignmentCommand, AssignmentSubmittedResponse>
@@ -19,7 +19,7 @@ public class SubmitAssignmentCommandHandler(
 
 		Result<AssignmentByIdResponse> getAssignmentResult = await getAssignmentHandler
 			.Handle(query, cancellationToken)
-			.ConfigureAwait(false);
+			;
 
 		if (getAssignmentResult.IsFailure)
 			return Result.Failure<AssignmentSubmittedResponse>(
@@ -36,9 +36,9 @@ public class SubmitAssignmentCommandHandler(
 		
 		await dbContext.AssignmentSubmissions
 			.AddAsync(assignmentSubmission, cancellationToken)
-			.ConfigureAwait(false);
+			;
 		
-		await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+		await dbContext.SaveChangesAsync(cancellationToken);
 
 		return Result.Success(new AssignmentSubmittedResponse(assignmentSubmission));
 	}

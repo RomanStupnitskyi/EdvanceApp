@@ -55,7 +55,7 @@ public static class LoggingDecorator
             
             ProcessingCommand(logger, commandName, null);
             
-            Result<TResponse> result = await innerHandler.Handle(command, cancellationToken).ConfigureAwait(false);
+            Result<TResponse> result = await innerHandler.Handle(command, cancellationToken);
             
             if (result.IsSuccess)
                 CompletedCommand(logger, commandName, null);
@@ -83,7 +83,7 @@ public static class LoggingDecorator
             
             ProcessingCommand(logger, commandName, null);
             
-            Result result = await innerHandler.Handle(command, cancellationToken).ConfigureAwait(false);
+            Result result = await innerHandler.Handle(command, cancellationToken);
             
             if (result.IsSuccess)
                 CompletedCommand(logger, commandName, null);
@@ -111,7 +111,7 @@ public static class LoggingDecorator
             
             ProcessingQuery(logger, queryName, null);
             
-            Result<TResponse> result = await innerHandler.Handle(query, cancellationToken).ConfigureAwait(false);
+            Result<TResponse> result = await innerHandler.Handle(query, cancellationToken);
             
             if (result.IsSuccess)
                 CompletedQuery(logger, queryName, null);

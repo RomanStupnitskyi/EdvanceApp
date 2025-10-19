@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ContentService.Application.Submissions.Update;
 
-public class UpdateSubmissionCommandHandler(
+internal sealed class UpdateSubmissionCommandHandler(
 	IApplicationDbContext dbContext)
 	: ICommandHandler<UpdateSubmissionCommand, UpdateSubmissionResponse>
 {
@@ -18,7 +18,7 @@ public class UpdateSubmissionCommandHandler(
 	{
 		AssignmentSubmission? submission = await dbContext.AssignmentSubmissions
 			.SingleOrDefaultAsync(submission => submission.Id == command.SubmissionId, cancellationToken)
-			.ConfigureAwait(false);
+			;
 
 		if (submission is null)
 			return Result.Failure<UpdateSubmissionResponse>(
@@ -29,7 +29,7 @@ public class UpdateSubmissionCommandHandler(
 			submission.Content = command.Content;
 			submission.LastUpdatedAt = DateTime.UtcNow;
 			
-			await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+			await dbContext.SaveChangesAsync(cancellationToken);
 		}
 		
 		return new UpdateSubmissionResponse(submission);

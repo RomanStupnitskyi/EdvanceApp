@@ -6,7 +6,7 @@ using Microsoft.Extensions.Caching.Hybrid;
 
 namespace ContentService.Application.Courses.Create;
 
-public class CreateCourseCommandHandler(
+internal sealed class CreateCourseCommandHandler(
 	HybridCache cache,
 	IApplicationDbContext dbContext)
 	: ICommandHandler<CreateCourseCommand, CreateCourseResponse>
@@ -21,11 +21,11 @@ public class CreateCourseCommandHandler(
 			CreatedBy = command.CreatedBy
 		};
 		
-		await dbContext.Courses.AddAsync(course, cancellationToken).ConfigureAwait(false);
-		await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+		await dbContext.Courses.AddAsync(course, cancellationToken);
+		await dbContext.SaveChangesAsync(cancellationToken);
 		
 		string cacheKey = $"course:{course.Id}";
-		await cache.SetAsync(cacheKey, course, cancellationToken: cancellationToken).ConfigureAwait(false);
+		await cache.SetAsync(cacheKey, course, cancellationToken: cancellationToken);
 		
 		return Result.Success(new CreateCourseResponse(course));
 	}

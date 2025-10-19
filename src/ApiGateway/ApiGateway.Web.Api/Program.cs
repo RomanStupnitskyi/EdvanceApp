@@ -48,6 +48,6 @@ app.UseSwaggerForOcelotUI(opt =>
 	opt.PathToSwaggerGenerator = "/swagger/docs";
 });
 
-await app.UseOcelot().ConfigureAwait(false); // Use Ocelot middleware for routing
+await app.UseOcelot(); // Use Ocelot middleware for routing
 
-await app.RunAsync().ConfigureAwait(false);
+await app.RunAsync();

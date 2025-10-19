@@ -18,7 +18,7 @@ public class GetMany : IEndpoint
 		{
 			var query = new GetCoursesQuery();
 		
-			Result<List<GetCourseResponse>> result = await handler.Handle(query, cancellationToken).ConfigureAwait(false);
+			Result<List<GetCourseResponse>> result = await handler.Handle(query, cancellationToken);
 
 			return result.Match(Results.Ok, CustomResults.Problem);
 		})

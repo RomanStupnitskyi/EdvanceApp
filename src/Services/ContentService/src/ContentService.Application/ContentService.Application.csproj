@@ -8,6 +8,12 @@
         <PackageReference Include="Scrutor" />
         <PackageReference Include="Serilog" />
     </ItemGroup>
+    
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+            <_Parameter1>Application.UnitTests</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\ContentService.Domain\ContentService.Domain.csproj" />

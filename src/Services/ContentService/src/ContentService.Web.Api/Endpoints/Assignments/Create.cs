@@ -31,7 +31,7 @@ public class Create : IEndpoint
 				EndDate = dto.EndDate
 			};
 
-			Result<CreateAssignmentResponse> result = await handler.Handle(command, cancellationToken).ConfigureAwait(false);
+			Result<CreateAssignmentResponse> result = await handler.Handle(command, cancellationToken);
 
 			return result.Match(Results.Ok, CustomResults.Problem);
 		})

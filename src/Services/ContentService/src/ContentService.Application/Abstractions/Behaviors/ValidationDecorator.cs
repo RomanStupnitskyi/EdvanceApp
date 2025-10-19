@@ -15,10 +15,10 @@ public static class ValidationDecorator
 	{
 		public async Task<Result<TResponse>> Handle(TCommand command, CancellationToken cancellationToken)
 		{
-			ValidationFailure[] validationFailures = await ValidateAsync(command, validators).ConfigureAwait(false);
+			ValidationFailure[] validationFailures = await ValidateAsync(command, validators);
 			
 			if (validationFailures.Length == 0)
-				return await innerHandler.Handle(command, cancellationToken).ConfigureAwait(false);
+				return await innerHandler.Handle(command, cancellationToken);
 			
 			return Result.Failure<TResponse>(CreateValidationError(validationFailures));
 		}
@@ -32,10 +32,10 @@ public static class ValidationDecorator
 	{
 		public async Task<Result> Handle(TCommand command, CancellationToken cancellationToken)
 		{
-			ValidationFailure[] validationFailures = await ValidateAsync(command, validators).ConfigureAwait(false);
+			ValidationFailure[] validationFailures = await ValidateAsync(command, validators);
 			
 			if (validationFailures.Length == 0)
-				return await innerHandler.Handle(command, cancellationToken).ConfigureAwait(false);
+				return await innerHandler.Handle(command, cancellationToken);
 			
 			return Result.Failure(CreateValidationError(validationFailures));
 		}
@@ -52,7 +52,7 @@ public static class ValidationDecorator
 		var context = new ValidationContext<TCommand>(command);
 		
 		ValidationResult[] validationResults = await Task.WhenAll(
-			enumerable.Select(v => v.ValidateAsync(context))).ConfigureAwait(false);
+			enumerable.Select(v => v.ValidateAsync(context)));
 
 		ValidationFailure[] failures = [.. validationResults
 			.Where(result => !result.IsValid)

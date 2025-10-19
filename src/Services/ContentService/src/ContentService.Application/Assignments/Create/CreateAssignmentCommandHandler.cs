@@ -7,7 +7,7 @@ using Microsoft.Extensions.Caching.Hybrid;
 
 namespace ContentService.Application.Assignments.Create;
 
-public class CreateAssignmentCommandHandler(
+internal sealed class CreateAssignmentCommandHandler(
 	IQueryHandler<GetCourseByIdQuery, CourseByIdResponse> getCourseHandler,
 	HybridCache cache,
 	IApplicationDbContext dbContext)
@@ -19,7 +19,7 @@ public class CreateAssignmentCommandHandler(
 	{
 		var query = new GetCourseByIdQuery(command.CourseId);
 		
-		Result<CourseByIdResponse> result = await getCourseHandler.Handle(query, cancellationToken).ConfigureAwait(false);
+		Result<CourseByIdResponse> result = await getCourseHandler.Handle(query, cancellationToken);
 		
 		if (result.IsFailure)
 			return Result.Failure<CreateAssignmentResponse>(
@@ -38,11 +38,11 @@ public class CreateAssignmentCommandHandler(
 			EndDate = command.EndDate
 		};
 		
-		await dbContext.Assignments.AddAsync(assignment, cancellationToken).ConfigureAwait(false);
-		await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+		await dbContext.Assignments.AddAsync(assignment, cancellationToken);
+		await dbContext.SaveChangesAsync(cancellationToken);
 		
 		string cacheKey = $"assignment:{assignment.Id}";
-		await cache.SetAsync(cacheKey, assignment, cancellationToken: cancellationToken).ConfigureAwait(false);
+		await cache.SetAsync(cacheKey, assignment, cancellationToken: cancellationToken);
 		
 		return Result.Success(new CreateAssignmentResponse(assignment));
 	}

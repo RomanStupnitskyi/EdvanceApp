@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ContentService.Application.Submissions.GetMany;
 
-public class GetSubmissionsQueryHandler(
+internal sealed class GetSubmissionsQueryHandler(
 	IApplicationDbContext dbContext) : IQueryHandler<GetSubmissionsQuery, List<GetSubmissionResponse>>
 {
 	public async Task<Result<List<GetSubmissionResponse>>> Handle(
@@ -14,7 +14,7 @@ public class GetSubmissionsQueryHandler(
 	{
 		List<GetSubmissionResponse> submissions = await dbContext.AssignmentSubmissions
 			.Select(submission => new GetSubmissionResponse(submission))
-			.ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
+			.ToListAsync(cancellationToken: cancellationToken);
 
 		return Result.Success(submissions);
 	}

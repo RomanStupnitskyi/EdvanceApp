@@ -26,7 +26,7 @@ public class Create : IEndpoint
 					CreatedBy = Guid.Empty
 				};
 				
-				Result<CreateCourseResponse> result = await handler.Handle(command, cancellationToken).ConfigureAwait(false);
+				Result<CreateCourseResponse> result = await handler.Handle(command, cancellationToken);
 
 				return result.Match(Results.Ok, CustomResults.Problem);
 			})

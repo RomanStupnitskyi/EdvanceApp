@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ContentService.Application.Submissions.Delete;
 
-public class DeleteSubmissionCommandHandler(
+internal sealed class DeleteSubmissionCommandHandler(
 	IApplicationDbContext dbContext) : ICommandHandler<DeleteSubmissionCommand>
 {
 	public async Task<Result> Handle(
@@ -14,13 +14,13 @@ public class DeleteSubmissionCommandHandler(
 		CancellationToken cancellationToken)
 	{
 		AssignmentSubmission? submission = await dbContext.AssignmentSubmissions
-			.SingleOrDefaultAsync(submission => submission.Id == command.SubmissionId, cancellationToken).ConfigureAwait(false);
+			.SingleOrDefaultAsync(submission => submission.Id == command.SubmissionId, cancellationToken);
 
 		if (submission is null)
 			return Result.Failure(AssignmentSubmissionErrors.NotFound(command.SubmissionId));
 
 		dbContext.AssignmentSubmissions.Remove(submission);
-		await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+		await dbContext.SaveChangesAsync(cancellationToken);
 
 		return Result.Success();
 	}

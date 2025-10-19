@@ -43,7 +43,7 @@ app.UseSerilogRequestLogging();
 
 app.UseExceptionHandler();
 
-await app.RunAsync().ConfigureAwait(false);
+await app.RunAsync();
 
 namespace ContentService.Web.Api
 {

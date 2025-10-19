@@ -7,7 +7,7 @@ using Microsoft.Extensions.Caching.Hybrid;
 
 namespace ContentService.Application.Submissions.GetById;
 
-public class GetSubmissionByIdQueryHandler(
+internal sealed class GetSubmissionByIdQueryHandler(
 	HybridCache cache,
 	IApplicationDbContext dbContext)
 	: IQueryHandler<GetSubmissionByIdQuery, GetSubmissionByIdResponse>
@@ -22,7 +22,7 @@ public class GetSubmissionByIdQueryHandler(
                 .Where(submission => submission.Id == query.SubmissionId)
                 .Select(submission => new GetSubmissionByIdResponse(submission))
                 .SingleOrDefaultAsync(entry)
-                .ConfigureAwait(false), cancellationToken: cancellationToken).ConfigureAwait(false);
+                , cancellationToken: cancellationToken);
 		
 		if (submission is null)
 			return Result.Failure<GetSubmissionByIdResponse>(

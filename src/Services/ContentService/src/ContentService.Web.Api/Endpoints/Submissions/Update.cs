@@ -24,7 +24,7 @@ public class Update : IEndpoint
 				Content = dto.Content
 			};
 			
-			Result<UpdateSubmissionResponse> result = await handler.Handle(command, cancellationToken).ConfigureAwait(false);
+			Result<UpdateSubmissionResponse> result = await handler.Handle(command, cancellationToken);
 
 			return result.Match(Results.Ok, CustomResults.Problem);
 		})

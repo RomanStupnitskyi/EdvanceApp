@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ContentService.Application.Assignments.GetByCourseId;
 
-public class GetAssignmentByCourseIdQueryHandler(
+internal sealed class GetAssignmentByCourseIdQueryHandler(
 	IQueryHandler<GetCourseByIdQuery, CourseByIdResponse> handler,
 	IApplicationDbContext dbContext)
 	: IQueryHandler<GetAssignmentByCourseIdQuery, List<CourseAssignmentResponse>>
@@ -16,7 +16,7 @@ public class GetAssignmentByCourseIdQueryHandler(
 	{
 		var courseQuery = new GetCourseByIdQuery(query.CourseId);
 		
-		Result<CourseByIdResponse> course = await handler.Handle(courseQuery, cancellationToken).ConfigureAwait(false);
+		Result<CourseByIdResponse> course = await handler.Handle(courseQuery, cancellationToken);
 
 		if (course.IsFailure)
 			return Result.Failure<List<CourseAssignmentResponse>>(
@@ -25,7 +25,7 @@ public class GetAssignmentByCourseIdQueryHandler(
 		List<CourseAssignmentResponse> assignments = await dbContext.Assignments
 			.Where(assignment => assignment.CourseId == query.CourseId)
 			.Select(assignment => new CourseAssignmentResponse(assignment))
-			.ToListAsync(cancellationToken).ConfigureAwait(false);
+			.ToListAsync(cancellationToken);
 
 		return Result.Success(assignments);
 	}

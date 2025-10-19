@@ -29,7 +29,7 @@ internal sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> log
 
 		httpContext.Response.StatusCode = problemDetails.Status.Value;
 
-		await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken).ConfigureAwait(false);
+		await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
 
 		return true;
 	}

@@ -31,7 +31,7 @@ public class Update : IEndpoint
 				EndDate = dto.EndDate
 			};
 		
-			Result<UpdateAssignmentResponse> result = await handler.Handle(command, cancellationToken).ConfigureAwait(false);
+			Result<UpdateAssignmentResponse> result = await handler.Handle(command, cancellationToken);
 		
 			return result.Match(Results.Ok, CustomResults.Problem);
 		})

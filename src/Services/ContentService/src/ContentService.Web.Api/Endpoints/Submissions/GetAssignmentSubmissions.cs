@@ -19,7 +19,7 @@ public class GetAssignmentSubmissions : IEndpoint
 		{
 			var query = new GetSubmissionsByAssignmentIdQuery(assignmentId);
 			
-			Result<List<AssignmentSubmissionResponse>> result = await handler.Handle(query, cancellationToken).ConfigureAwait(false);
+			Result<List<AssignmentSubmissionResponse>> result = await handler.Handle(query, cancellationToken);
 
 			return result.Match(Results.Ok, CustomResults.Problem);
 		})

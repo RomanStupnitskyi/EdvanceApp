@@ -7,7 +7,7 @@ using Microsoft.Extensions.Caching.Hybrid;
 
 namespace ContentService.Application.Assignments.Update;
 
-public class UpdateAssignmentCommandHandler(
+internal sealed class UpdateAssignmentCommandHandler(
 	HybridCache cache,
 	IApplicationDbContext dbContext)
 	: ICommandHandler<UpdateAssignmentCommand, UpdateAssignmentResponse>
@@ -17,7 +17,7 @@ public class UpdateAssignmentCommandHandler(
 		CancellationToken cancellationToken)
 	{
 		Assignment? assignment = await dbContext.Assignments
-			.SingleOrDefaultAsync(assignment => assignment.Id == command.AssignmentId, cancellationToken).ConfigureAwait(false);
+			.SingleOrDefaultAsync(assignment => assignment.Id == command.AssignmentId, cancellationToken);
 
 		if (assignment == null)
 			return Result.Failure<UpdateAssignmentResponse>(AssignmentErrors.NotFound(command.AssignmentId));
@@ -43,10 +43,10 @@ public class UpdateAssignmentCommandHandler(
 		if (command.EndDate != assignment.EndDate && command.EndDate.HasValue)
 			assignment.EndDate = command.EndDate.Value;
 
-		await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+		await dbContext.SaveChangesAsync(cancellationToken);
 		
 		string cacheKey = $"assignment:{assignment.Id}";
-		await cache.RemoveAsync(cacheKey, cancellationToken).ConfigureAwait(false);
+		await cache.RemoveAsync(cacheKey, cancellationToken);
 
 		return Result.Success(new UpdateAssignmentResponse(assignment));
 	}

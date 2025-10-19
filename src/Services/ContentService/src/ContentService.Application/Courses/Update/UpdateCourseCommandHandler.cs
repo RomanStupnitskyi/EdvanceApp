@@ -7,7 +7,7 @@ using Microsoft.Extensions.Caching.Hybrid;
 
 namespace ContentService.Application.Courses.Update;
 
-public class UpdateCourseCommandHandler(
+internal sealed class UpdateCourseCommandHandler(
 	HybridCache cache,
 	IApplicationDbContext dbContext)
 	: ICommandHandler<UpdateCourseCommand, UpdateCourseResponse>
@@ -15,7 +15,7 @@ public class UpdateCourseCommandHandler(
 	public async Task<Result<UpdateCourseResponse>> Handle(UpdateCourseCommand command, CancellationToken cancellationToken)
 	{
 		Course? course = await dbContext.Courses
-			.SingleOrDefaultAsync(c => c.Id == command.CourseId, cancellationToken).ConfigureAwait(false);
+			.SingleOrDefaultAsync(c => c.Id == command.CourseId, cancellationToken);
 
 		if (course is null)
 			return Result.Failure<UpdateCourseResponse>(CourseErrors.NotFound(command.CourseId));
@@ -32,10 +32,10 @@ public class UpdateCourseCommandHandler(
 		course.LastModifiedAt = DateTime.UtcNow;
 		course.LastModifiedBy = Guid.Empty;
 
-		await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+		await dbContext.SaveChangesAsync(cancellationToken);
 		
 		string cacheKey = $"course:{course.Id}";
-		await cache.SetAsync(cacheKey, course, cancellationToken: cancellationToken).ConfigureAwait(false);
+		await cache.SetAsync(cacheKey, course, cancellationToken: cancellationToken);
 
 		return Result.Success(new UpdateCourseResponse(course));
 	}

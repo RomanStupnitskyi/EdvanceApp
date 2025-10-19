@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ContentService.Application.Courses.GetMany;
 
-public class GetCourseQueryHandler(IApplicationDbContext dbContext)
+internal sealed class GetCourseQueryHandler(IApplicationDbContext dbContext)
 	: IQueryHandler<GetCoursesQuery, List<GetCourseResponse>>
 {
 	public async Task<Result<List<GetCourseResponse>>> Handle(
@@ -14,7 +14,7 @@ public class GetCourseQueryHandler(IApplicationDbContext dbContext)
 	{
 		List<GetCourseResponse> courses = await dbContext.Courses
 			.Select(course => new GetCourseResponse(course))
-			.ToListAsync(cancellationToken).ConfigureAwait(false);
+			.ToListAsync(cancellationToken);
 		
 		return Result.Success(courses);
 	}

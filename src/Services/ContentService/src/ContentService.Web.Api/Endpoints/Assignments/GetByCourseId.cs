@@ -19,7 +19,7 @@ public class GetByCourseId : IEndpoint
 		{
 			var query = new GetAssignmentByCourseIdQuery(courseId);
 
-			Result<List<CourseAssignmentResponse>> result = await getAssignmentsHandler.Handle(query, cancellationToken).ConfigureAwait(false);
+			Result<List<CourseAssignmentResponse>> result = await getAssignmentsHandler.Handle(query, cancellationToken);
 
 			return result.Match(Results.Ok, CustomResults.Problem);
 		})

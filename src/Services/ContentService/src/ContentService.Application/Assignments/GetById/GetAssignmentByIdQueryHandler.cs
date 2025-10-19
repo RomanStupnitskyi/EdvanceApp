@@ -7,7 +7,7 @@ using Microsoft.Extensions.Caching.Hybrid;
 
 namespace ContentService.Application.Assignments.GetById;
 
-public class GetAssignmentByIdQueryHandler(
+internal sealed class GetAssignmentByIdQueryHandler(
 	HybridCache cache,
 	IApplicationDbContext dbContext)
 	: IQueryHandler<GetAssignmentByIdQuery, AssignmentByIdResponse>
@@ -19,8 +19,8 @@ public class GetAssignmentByIdQueryHandler(
 		{
 			return await dbContext.Assignments
 				.AsNoTracking()
-				.FirstOrDefaultAsync(a => a.Id == query.AssignmentId, entry).ConfigureAwait(false);
-		}, cancellationToken: cancellationToken).ConfigureAwait(false);
+				.FirstOrDefaultAsync(a => a.Id == query.AssignmentId, entry);
+		}, cancellationToken: cancellationToken);
 
 		return assignment is null
 			? Result.Failure<AssignmentByIdResponse>(AssignmentErrors.NotFound(query.AssignmentId))

@@ -19,7 +19,7 @@ public class Delete : IEndpoint
 		{
 			var command = new DeleteCourseCommand(courseId);
 		
-			Result result = await handler.Handle(command, cancellationToken).ConfigureAwait(false);
+			Result result = await handler.Handle(command, cancellationToken);
 		
 			return result.Match(Results.NoContent, CustomResults.Problem);
 		})

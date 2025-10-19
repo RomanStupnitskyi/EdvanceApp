@@ -7,7 +7,7 @@ using Microsoft.Extensions.Caching.Hybrid;
 
 namespace ContentService.Application.Courses.GetById;
 
-public class GetCourseByIdQueryHandler(
+internal sealed class GetCourseByIdQueryHandler(
 	IApplicationDbContext dbContext,
 	HybridCache cache)
 	: IQueryHandler<GetCourseByIdQuery, CourseByIdResponse>
@@ -21,8 +21,8 @@ public class GetCourseByIdQueryHandler(
 			return await dbContext.Courses
 				.Where(course => course.Id == query.CourseId)
 				.SingleOrDefaultAsync(entry)
-				.ConfigureAwait(false);
-		}, cancellationToken: cancellationToken).ConfigureAwait(false);
+				;
+		}, cancellationToken: cancellationToken);
 
 		return course is null
 			? Result.Failure<CourseByIdResponse>(CourseErrors.NotFound(query.CourseId))

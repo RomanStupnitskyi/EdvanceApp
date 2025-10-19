@@ -7,7 +7,7 @@ using Microsoft.Extensions.Caching.Hybrid;
 
 namespace ContentService.Application.Assignments.Delete;
 
-public class DeleteAssignmentCommandHandler(
+internal sealed class DeleteAssignmentCommandHandler(
 	HybridCache cache,
 	IApplicationDbContext dbContext)
 	: ICommandHandler<DeleteAssignmentCommand>
@@ -15,16 +15,16 @@ public class DeleteAssignmentCommandHandler(
 	public async Task<Result> Handle(DeleteAssignmentCommand command, CancellationToken cancellationToken)
 	{
 		Assignment? assignment = await dbContext.Assignments
-			.SingleOrDefaultAsync(assignment => assignment.Id == command.AssignmentId, cancellationToken).ConfigureAwait(false);
+			.SingleOrDefaultAsync(assignment => assignment.Id == command.AssignmentId, cancellationToken);
 
 		if (assignment is null)
 			return Result.Failure(AssignmentErrors.NotFound(command.AssignmentId));
 
 		dbContext.Assignments.Remove(assignment);
-		await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+		await dbContext.SaveChangesAsync(cancellationToken);
 		
 		string cacheKey = $"assignment:{assignment.Id}";
-		await cache.RemoveAsync(cacheKey, cancellationToken).ConfigureAwait(false);
+		await cache.RemoveAsync(cacheKey, cancellationToken);
 
 		return Result.Success();
 	}

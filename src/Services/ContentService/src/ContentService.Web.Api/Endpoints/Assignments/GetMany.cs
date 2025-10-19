@@ -16,7 +16,7 @@ public class GetMany : IEndpoint
 			IQueryHandler<GetAssignmentQuery, List<GetAssignmentResponse>> handler,
 			CancellationToken cancellationToken) =>
 		{
-			Result<List<GetAssignmentResponse>> result = await handler.Handle(new GetAssignmentQuery(), cancellationToken).ConfigureAwait(false);
+			Result<List<GetAssignmentResponse>> result = await handler.Handle(new GetAssignmentQuery(), cancellationToken);
 
 			return result.Match(Results.Ok, CustomResults.Problem);
 		})

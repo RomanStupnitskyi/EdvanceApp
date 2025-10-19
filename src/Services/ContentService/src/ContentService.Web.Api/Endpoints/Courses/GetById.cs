@@ -19,7 +19,7 @@ public class GetById : IEndpoint
 		{
 			var query = new GetCourseByIdQuery(courseId);
 		
-			Result<CourseByIdResponse> result = await handler.Handle(query, cancellationToken).ConfigureAwait(false);
+			Result<CourseByIdResponse> result = await handler.Handle(query, cancellationToken);
 		
 			return result.Match(Results.Ok, CustomResults.Problem);
 		})

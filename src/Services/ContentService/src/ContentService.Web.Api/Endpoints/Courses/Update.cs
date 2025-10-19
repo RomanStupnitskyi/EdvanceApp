@@ -26,7 +26,7 @@ public class Update : IEndpoint
 				IsVisible = dto.IsVisible
 			};
 
-			Result<UpdateCourseResponse> result = await handler.Handle(command, cancellationToken).ConfigureAwait(false);
+			Result<UpdateCourseResponse> result = await handler.Handle(command, cancellationToken);
 
 			return result.Match(Results.Ok, CustomResults.Problem);
 		})

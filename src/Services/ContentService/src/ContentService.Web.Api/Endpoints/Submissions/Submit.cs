@@ -26,7 +26,7 @@ public class Submit : IEndpoint
 				Content = dto.Content
 			};
 
-			Result<AssignmentSubmittedResponse> result = await handler.Handle(command, cancellationToken).ConfigureAwait(false);
+			Result<AssignmentSubmittedResponse> result = await handler.Handle(command, cancellationToken);
 
 			return result.Match(Results.Ok, CustomResults.Problem);
 		})
