@@ -15,6 +15,7 @@ internal sealed class CreateCourseCommandHandler(
 	{
 		var course = new Course
 		{
+            Id = command.CourseId,
 			Title = command.Title,
 			Description = command.Description,
 			IsVisible = command.IsVisible,

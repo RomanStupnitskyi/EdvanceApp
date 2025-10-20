@@ -20,6 +20,7 @@ public class Create : IEndpoint
 			{
 				var command = new CreateCourseCommand
 				{
+                    CourseId = dto.CourseId ?? Guid.NewGuid(),
 					Title = dto.Title,
 					Description = dto.Description,
 					IsVisible = dto.IsVisible,
