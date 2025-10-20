@@ -20,9 +20,9 @@
     <ItemGroup>
         <Using Include="Xunit"/>
     </ItemGroup>
-
+    
     <ItemGroup>
-      <ProjectReference Include="..\Services\ContentService\src\ContentService.Application\ContentService.Application.csproj" />
+      <ProjectReference Include="..\..\src\ContentService.Application\ContentService.Application.csproj" />
     </ItemGroup>
 
 </Project>

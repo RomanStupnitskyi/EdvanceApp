@@ -25,7 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Services\ContentService\src\ContentService.Web.Api\ContentService.Web.Api.csproj" />
+      <ProjectReference Include="..\..\src\ContentService.Web.Api\ContentService.Web.Api.csproj" />
     </ItemGroup>
 
 </Project>
