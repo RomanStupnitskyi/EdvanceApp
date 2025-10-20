@@ -37,10 +37,11 @@
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER:-guest}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS:-guest}
     healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "ping"]
-      interval: 10s
-      timeout: 5s
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
       retries: 5
+      start_period: 10s
     networks:
       - edvance-net
  
