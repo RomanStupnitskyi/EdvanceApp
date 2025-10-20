@@ -1,10 +1,8 @@
 using Application.UnitTests.Abstractions;
-using ContentService.Application.Abstractions.Data;
+using Application.UnitTests.Extensions;
 using ContentService.Application.Courses.Delete;
 using ContentService.Domain.Courses;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Hybrid;
 using NSubstitute;
 
 namespace Application.UnitTests.Courses;
@@ -61,6 +59,8 @@ public class DeleteCourseCommandTests : BaseTests
     public async Task Handle_Should_ClearCache_After_DeletingCourse()
     {
         // Arrange
+        string cacheKey = $"course:{Command.CourseId}";
+        CacheMock.SetupRemoveAsync(cacheKey);
         var course = new Course
         {
             Id = Command.CourseId,
@@ -72,9 +72,11 @@ public class DeleteCourseCommandTests : BaseTests
         
         // Act
         var result = await _handler.Handle(Command, CancellationToken.None);
+        var deletedCourse = await DbContext.Courses.FindAsync(Command.CourseId);
         
         // Assert
         result.IsSuccess.Should().BeTrue();
-        await CacheMock.Received(1).RemoveAsync(Arg.Any<string>(), Arg.Any<CancellationToken>());
+        await CacheMock.AssertRemoveAsyncCalledAsync(cacheKey, 1);
+        deletedCourse.Should().BeNull();
     }
 }

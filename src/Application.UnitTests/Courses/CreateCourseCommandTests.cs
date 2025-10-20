@@ -1,10 +1,9 @@
 using Application.UnitTests.Abstractions;
-using ContentService.Application.Abstractions.Data;
+using Application.UnitTests.Extensions;
 using ContentService.Application.Courses.Create;
+using ContentService.Domain.Courses;
 using FluentAssertions;
 using FluentValidation.TestHelper;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Hybrid;
 using NSubstitute;
 
 namespace Application.UnitTests.Courses;
@@ -13,6 +12,7 @@ public class CreateCourseCommandTests : BaseTests
 {
     private static readonly CreateCourseCommand Command = new()
     {
+        CourseId = Guid.NewGuid(),
         Title = "Test Course",
         Description = "Test Course Description",
         IsVisible = true,
@@ -28,7 +28,7 @@ public class CreateCourseCommandTests : BaseTests
     }
     
     [Fact]
-    public async Task Handle_Should_ReturnError_When_Title_Is_Empty()
+    public async Task Handle_Should_ReturnError_When_TitleIsEmpty()
     {
         // Arrange
         var invalidCommand = Command with { Title = string.Empty };
@@ -43,7 +43,7 @@ public class CreateCourseCommandTests : BaseTests
     }
     
     [Fact]
-    public async Task Handle_Should_ReturnError_When_Title_Exceeds_MaxLength()
+    public async Task Handle_Should_ReturnError_When_TitleExceedsMaxLength()
     {
         // Arrange
         var invalidCommand = Command with { Title = new string('A', 101) };
@@ -58,7 +58,7 @@ public class CreateCourseCommandTests : BaseTests
     }
 
     [Fact]
-    public async Task Handle_Should_ReturnError_When_Description_Is_Empty()
+    public async Task Handle_Should_ReturnError_When_DescriptionIsEmpty()
     {
         // Arrange
         var invalidCommand = Command with { Description = string.Empty };
@@ -73,7 +73,7 @@ public class CreateCourseCommandTests : BaseTests
     }
 
     [Fact]
-    public async Task Handle_Should_ReturnError_When_Description_Exceeds_MaxLength()
+    public async Task Handle_Should_ReturnError_When_DescriptionExceedsMaxLength()
     {
         // Arrange
         var invalidCommand = Command with { Description = new string('A', 501) };
@@ -86,10 +86,12 @@ public class CreateCourseCommandTests : BaseTests
     }
     
     [Fact]
-    public async Task Handle_Should_Create_Course_When_Command_Is_Valid()
+    public async Task Handle_Should_CreateCourseWithCache_When_CommandIsValid()
     {
         // Arrange
         var validCommand = Command;
+        string cachedCourseKey = $"course:{validCommand.CourseId}";
+        CacheMock.SetupSetAsync<Course>(cachedCourseKey);
 
         // Act
         var result = await _handler.Handle(validCommand, CancellationToken.None);
@@ -98,6 +100,7 @@ public class CreateCourseCommandTests : BaseTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         createdCourse.Should().NotBeNull();
+        await CacheMock.AssertSetAsyncCalledAsync<Course>(cachedCourseKey, 1);
         createdCourse.Title.Should().Be(validCommand.Title);
         createdCourse.Description.Should().Be(validCommand.Description);
         createdCourse.IsVisible.Should().Be(validCommand.IsVisible);
