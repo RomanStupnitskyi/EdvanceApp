@@ -20,8 +20,7 @@ internal sealed class GetCourseByIdQueryHandler(
 		{
 			return await dbContext.Courses
 				.Where(course => course.Id == query.CourseId)
-				.SingleOrDefaultAsync(entry)
-				;
+				.SingleOrDefaultAsync(entry);
 		}, cancellationToken: cancellationToken);
 
 		return course is null
